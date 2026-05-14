@@ -61,7 +61,6 @@ Your Command Center must include:
 
 ## Problem Tracks
 
-Choose one track for your Command Center:
 
 ### Track 1: Sales Command Center 💼
 
@@ -121,7 +120,7 @@ Choose one track for your Command Center:
 
 ### Required for Submission
 
-1. **Working Application** — Deployed frontend connected to your AI backend
+1. **Working Application** — Fully functional frontend connected to your AI backend, would be preferred if deployed somewhere or also you can show on localhost
 2. **Agents on Auto** — Orchestrator + 5 Operators built and running on [auto.supervity.ai](https://auto.supervity.ai)
 3. **Live Demo** (5-10 minutes) showing the full flow:
    - Trigger → Orchestrator receives task (via Auto)
