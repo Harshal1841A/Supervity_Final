@@ -432,10 +432,46 @@ export default function LiveOperationsDashboard() {
           let evt: Record<string, unknown> = {};
           try { evt = JSON.parse(dataLine); } catch { evt = { message: dataLine }; }
 
-          // Map Supervity SSE event → LogEntry
-          const agentName = (evt.node_name ?? evt.agent ?? evt.operator ?? "Atlas") as string;
-          const statusRaw = (evt.status ?? evt.type ?? "nominal") as string;
-          const msgText   = (evt.output ?? evt.message ?? evt.content ?? JSON.stringify(evt)) as string;
+          // ── Map Supervity SSE event → LogEntry ──────────────────────────────
+          // Supervity sends many event types — extract agent name robustly
+          const agentName = (
+            evt.node_name ?? evt.agent ?? evt.operator ?? evt.source ?? "Atlas"
+          ) as string;
+
+          // Normalize status — Supervity uses "event" as the type field
+          const eventType = (evt.event ?? evt.type ?? evt.status ?? "nominal") as string;
+          const statusRaw = eventType.toLowerCase();
+
+          // ── Human-readable message extraction ───────────────────────────────
+          // Priority: output > message > content > event-specific fields > label
+          let msgText: string;
+          if (evt.output && typeof evt.output === "string" && evt.output.trim()) {
+            msgText = evt.output.trim();
+          } else if (evt.message && typeof evt.message === "string" && evt.message.trim()) {
+            msgText = evt.message.trim();
+          } else if (evt.content && typeof evt.content === "string" && evt.content.trim()) {
+            msgText = evt.content.trim();
+          } else if (evt.text && typeof evt.text === "string" && evt.text.trim()) {
+            msgText = evt.text.trim();
+          } else if (evt.result && typeof evt.result === "string" && evt.result.trim()) {
+            msgText = evt.result.trim();
+          } else if (evt.summary && typeof evt.summary === "string" && evt.summary.trim()) {
+            msgText = evt.summary.trim();
+          } else {
+            // Last resort: convert known event types to human labels instead of raw JSON
+            const eventLabel: Record<string, string> = {
+              "thinking":      "Agent is analysing the situation…",
+              "workflow-run":  "Workflow execution started.",
+              "ping":          "Heartbeat — connection healthy.",
+              "start":         "Agent task started.",
+              "end":           "Agent task completed.",
+              "tool-call":     "Calling external tool…",
+              "tool-result":   "Tool returned a result.",
+              "pending_human": "Awaiting human approval.",
+              "completed":     "Agent sequence completed successfully.",
+            };
+            msgText = eventLabel[statusRaw] ?? `Event received: ${statusRaw}`;
+          }
 
           const newLog: LogEntry = {
             agent:        String(agentName),
@@ -492,8 +528,13 @@ export default function LiveOperationsDashboard() {
               : a
           ));
 
-          // Mark completed
-          if (evt.completed === true || statusRaw === "completed" || statusRaw === "done") {
+          // Mark completed — Supervity uses event:"end" or completed:true
+          if (
+            evt.completed === true ||
+            statusRaw === "completed" ||
+            statusRaw === "done" ||
+            statusRaw === "end"
+          ) {
             setActiveRunId(null);
             toast.success("GrowthPilot execution sequence completed.");
           }

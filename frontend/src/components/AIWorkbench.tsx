@@ -48,6 +48,7 @@ interface AgentTask {
   time: string;
   brand_name?: string;
   icon: LucideIcon;
+  fromDb?: boolean; // true = came from /api/dashboard/workbench (SSE-pushed)
 }
 
 // ─── Agent icon resolver ──────────────────────────────────────────────────────
@@ -133,6 +134,8 @@ export default function AIWorkbench() {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [actionedIds, setActionedIds] = useState<Set<string>>(new Set());
+  // DB-backed tasks pushed by the live SSE stream
+  const [dbTasks, setDbTasks] = useState<AgentTask[]>([]);
 
   // Mark mounted — prevents hydration mismatch
   useEffect(() => { setMounted(true); }, []);
@@ -163,6 +166,32 @@ export default function AIWorkbench() {
     if (savedDemo === "true") setDemoMode(true);
   }, []);
 
+  // ── Poll /api/dashboard/workbench every 3s for tasks pushed by live SSE ──
+  useEffect(() => {
+    const fetchDbTasks = () => {
+      fetch("/api/dashboard/workbench")
+        .then(r => r.ok ? r.json() : [])
+        .then((data: Array<{ id: string; agent: string; priority: string; message: string; time: string; brand_name?: string }>) => {
+          const mapped: AgentTask[] = data.map(t => ({
+            id: t.id,
+            agentId: t.agent.toLowerCase(),
+            title: `${t.agent.charAt(0).toUpperCase() + t.agent.slice(1).toLowerCase()} Request`,
+            priority: (t.priority as "HIGH" | "MEDIUM" | "LOW") || "HIGH",
+            message: t.message,
+            time: t.time || "just now",
+            brand_name: t.brand_name,
+            icon: getAgentIcon(t.agent),
+            fromDb: true,
+          }));
+          setDbTasks(mapped);
+        })
+        .catch(() => {});
+    };
+    fetchDbTasks();
+    const interval = setInterval(fetchDbTasks, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Alt+G → toggle God Mode
   const demoModeRef = useRef(demoMode);
   useEffect(() => {
@@ -183,14 +212,23 @@ export default function AIWorkbench() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Generate queue purely from activeBrand metrics (ZERO fake data)
-  const displayQueue = activeBrand 
+  // Merge: DB tasks (from SSE stream) take priority, then brand alerts
+  // DB tasks that have already been actioned are filtered out by actionedIds
+  const brandAlerts = activeBrand
     ? buildBrandAlerts(activeBrand).filter(t => !actionedIds.has(t.id))
     : [];
 
+  // Deduplicate: DB tasks override brand alerts for the same agentId
+  const dbAgentIds = new Set(dbTasks.filter(t => !actionedIds.has(t.id)).map(t => t.agentId));
+  const filteredBrandAlerts = brandAlerts.filter(a => !dbAgentIds.has(a.agentId));
+  const displayQueue: AgentTask[] = [
+    ...dbTasks.filter(t => !actionedIds.has(t.id)),
+    ...filteredBrandAlerts,
+  ];
+
   const selected = displayQueue.find(q => q.id === activeId) ?? null;
 
-  // Auto-select first brand alert when brand changes
+  // Auto-select first item when queue changes
   useEffect(() => {
     if (displayQueue.length > 0 && !displayQueue.some(q => q.id === activeId)) {
       setActiveId(displayQueue[0].id);
@@ -217,6 +255,8 @@ export default function AIWorkbench() {
       setTimeout(() => {
         toast.success(`[DEMO] ${task.agentId.toUpperCase()} Approved. Workflow resuming.`, { style: customToastStyle });
         setActionedIds(prev => new Set(prev).add(task.id));
+        // Remove from DB in demo mode too
+        if (task.fromDb) fetch(`/api/dashboard/workbench?id=${task.id}`, { method: "DELETE" }).catch(() => {});
         setProcessingId(null);
       }, 1200);
       return;
@@ -228,8 +268,8 @@ export default function AIWorkbench() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "APPROVE",
-          agent: task.agentId,
-          brandName: activeBrand?.name,
+          agent: task.agentId.toUpperCase(),
+          brandName: task.brand_name || activeBrand?.name,
           hubspotUrl: activeBrand?.hubspotUrl,
         }),
       });
@@ -238,8 +278,15 @@ export default function AIWorkbench() {
         const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
         throw new Error(err.error || `HTTP ${res.status}`);
       }
-      toast.success(`${task.agentId.toUpperCase()} workflow triggered. Execution resuming.`, { style: customToastStyle });
+
+      toast.success(`${task.agentId.toUpperCase()} approved — Supervity execution resuming.`, { style: customToastStyle });
       setActionedIds(prev => new Set(prev).add(task.id));
+
+      // Remove from DB so it vanishes from the queue on next poll
+      if (task.fromDb) {
+        await fetch(`/api/dashboard/workbench?id=${task.id}`, { method: "DELETE" }).catch(() => {});
+        setDbTasks(prev => prev.filter(t => t.id !== task.id));
+      }
     } catch (err) {
       toast.error(`Failed to sync: ${err instanceof Error ? err.message : "Network error"}`);
     } finally {
@@ -255,6 +302,7 @@ export default function AIWorkbench() {
       setTimeout(() => {
         toast.error(`[DEMO] ${task.agentId.toUpperCase()} decision rejected.`, { style: customToastStyle });
         setActionedIds(prev => new Set(prev).add(task.id));
+        if (task.fromDb) fetch(`/api/dashboard/workbench?id=${task.id}`, { method: "DELETE" }).catch(() => {});
         setProcessingId(null);
       }, 800);
       return;
@@ -266,14 +314,21 @@ export default function AIWorkbench() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "REJECT",
-          agent: task.agentId,
-          brandName: activeBrand?.name,
+          agent: task.agentId.toUpperCase(),
+          brandName: task.brand_name || activeBrand?.name,
           hubspotUrl: activeBrand?.hubspotUrl,
         }),
       });
-      if (!res.ok) throw new Error("Approval failed");
-      toast.error(`${task.agentId.toUpperCase()} decision rejected. Agents notified.`, { style: customToastStyle });
+      if (!res.ok) throw new Error("Reject call failed");
+
+      toast.error(`${task.agentId.toUpperCase()} rejected — Supervity notified.`, { style: customToastStyle });
       setActionedIds(prev => new Set(prev).add(task.id));
+
+      // Remove from DB so the task leaves the queue
+      if (task.fromDb) {
+        await fetch(`/api/dashboard/workbench?id=${task.id}`, { method: "DELETE" }).catch(() => {});
+        setDbTasks(prev => prev.filter(t => t.id !== task.id));
+      }
     } catch (err) {
       toast.error(`Failed to sync: ${err instanceof Error ? err.message : "Network error"}`);
     } finally {
