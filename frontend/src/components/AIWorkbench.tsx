@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import type { BrandData } from "@/lib/brands";
+import { BrandData, BRAND_DATA } from "@/lib/brands";
 import {
   ArrowRight,
   Check,
@@ -145,13 +145,18 @@ export default function AIWorkbench() {
     fetch("/api/dashboard/brands")
       .then(r => r.ok ? r.json() : [])
       .then((data: BrandData[]) => {
-        if (!data || data.length === 0) return;
-        setBrands(data);
+        const brandList = (data && data.length > 0) ? data : BRAND_DATA;
+        setBrands(brandList);
         const saved = localStorage.getItem("nexus_activeBrandId");
-        const found = saved ? data.find(b => b.id === saved) : null;
-        setActiveBrand(found ?? data[0]);
+        const found = saved ? brandList.find(b => b.id === saved) : null;
+        setActiveBrand(found ?? brandList[0]);
       })
-      .catch(() => {});
+      .catch(() => {
+        setBrands(BRAND_DATA);
+        const saved = localStorage.getItem("nexus_activeBrandId");
+        const found = saved ? BRAND_DATA.find(b => b.id === saved) : null;
+        setActiveBrand(found ?? BRAND_DATA[0]);
+      });
   }, []);
 
   const handleBrandSelect = (b: BrandData) => {

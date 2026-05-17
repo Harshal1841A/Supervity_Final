@@ -510,8 +510,16 @@ export default function LiveOperationsDashboard() {
             }
           }
 
-          // Enqueue workbench task if agent is pending human approval
+          // Detect Supervity human-in-the-loop pause (broad match across all event shapes)
+          const nodeNameRaw = String(evt.nodeName ?? evt.node_name ?? evt.stepName ?? "").toLowerCase();
+          const isApprovalNode =
+            nodeNameRaw.includes("workbench") ||
+            nodeNameRaw.includes("approval") ||
+            nodeNameRaw.includes("human") ||
+            nodeNameRaw.includes("review");
+
           const needsHuman =
+            isApprovalNode ||
             statusRaw === "pending_human" ||
             statusRaw === "human-input-required" ||
             statusRaw === "node-paused" ||
