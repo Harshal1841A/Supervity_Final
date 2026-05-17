@@ -429,13 +429,11 @@ export default function LiveOperationsDashboard() {
 
         for (const line of lines) {
           const trimmed = line.trim();
-          if (!trimmed || trimmed.startsWith(":")) continue; // SSE comment/ping
-
-          const dataLine = trimmed.startsWith("data:") ? trimmed.slice(5).trim() : trimmed;
+          if (!trimmed || trimmed.startsWith(":") || !trimmed.startsWith("data:")) continue;
+          const dataLine = trimmed.slice(5).trim();
           if (!dataLine || dataLine === "[DONE]") continue;
-
           let evt: Record<string, unknown> = {};
-          try { evt = JSON.parse(dataLine); } catch { evt = { message: dataLine }; }
+          try { evt = JSON.parse(dataLine); } catch { continue; }
 
           // ── Map Supervity SSE event → LogEntry ──────────────────────────────
           // Supervity sends many event types — extract agent name robustly
@@ -478,6 +476,9 @@ export default function LiveOperationsDashboard() {
             msgText = eventLabel[statusRaw] ?? `Event received: ${statusRaw}`;
           }
 
+          // Skip heartbeat pings — don't pollute the log
+          if (statusRaw === "ping" || msgText.toLowerCase() === "ping") continue;
+
           const newLog: LogEntry = {
             agent:        String(agentName),
             status:       String(statusRaw).toLowerCase(),
@@ -510,11 +511,19 @@ export default function LiveOperationsDashboard() {
           }
 
           // Enqueue workbench task if agent is pending human approval
-          if (
+          const needsHuman =
             statusRaw === "pending_human" ||
             statusRaw === "human-input-required" ||
-            statusRaw === "node-paused"
-          ) {
+            statusRaw === "node-paused" ||
+            statusRaw === "paused" ||
+            statusRaw === "waiting_human" ||
+            statusRaw === "human_review" ||
+            evt.human_required === true ||
+            evt.requires_approval === true ||
+            typeof evt.formId === "string" ||
+            typeof evt.form_id === "string";
+
+          if (needsHuman) {
             const taskPayload = {
               id: `${String(agentName).toLowerCase()}-${Date.now()}`,
               agent: String(agentName),
