@@ -70,14 +70,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Supervity returned ${supervityRes.status}` }, { status: 502 });
     }
 
-    // CRITICAL: Drain the SSE body completely before returning.
-    // Without this, the TCP connection stays open forever → socket pool exhaustion after ~10 calls.
+    // CRITICAL: Drain the SSE body completely to prevent TCP socket leak, 
+    // but do it ASYNCHRONOUSLY so we don't block the frontend UI while the agent runs.
     if (supervityRes.body) {
-      const reader = supervityRes.body.getReader();
-      while (true) {
-        const { done } = await reader.read();
-        if (done) break;
-      }
+      const drainStream = async () => {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const reader = supervityRes.body!.getReader();
+          while (true) {
+            const { done } = await reader.read();
+            if (done) break;
+          }
+        } catch (err) {
+          console.error("[Workbench] Background stream drain error:", err);
+        }
+      };
+      // Fire and forget
+      drainStream();
     }
 
     return NextResponse.json({ success: true, message: `Action ${action} synced with Supervity for ${agent}` });
@@ -86,4 +95,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
 

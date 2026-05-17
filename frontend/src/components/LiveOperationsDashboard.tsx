@@ -555,41 +555,13 @@ export default function LiveOperationsDashboard() {
   }, [isTriggering, activeRunId, demoMode, activeBrand]);
 
   // ── Audit Handler ──
-  const handleAudit = async () => {
-    if (isAuditing || !activeBrand) return;
-    setIsAuditing(true);
-    if (demoMode) {
-      await new Promise(r => setTimeout(r, 800));
-      toast.success(`[DEMO] System audit initiated for ${activeBrand.name}`);
-      setIsAuditing(false);
+  const handleAudit = () => {
+    if (isTriggering || activeRunId || !activeBrand) {
+      toast.error("An operation is already in progress.");
       return;
     }
-    try {
-      const res = await fetch("/api/agents/trigger", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          agent: "ATLAS",
-          brand_name: activeBrand.name,
-          trigger_source: "manual",
-          trigger_reason: `System audit triggered from Command Center at ${new Date().toISOString()}`,
-          campaign_state_url: activeBrand.hubspotUrl,
-          share_of_voice_drop_pp: activeBrand.sovDrop,
-          crisis_probability: activeBrand.crisisProb / 100,
-          wasted_spend_inr: activeBrand.wasteInr,
-          current_cac_inr: activeBrand.currentCac,
-          target_cac_inr: activeBrand.targetCac,
-          proposed_spend_change_inr: Math.round(activeBrand.wasteInr * 0.5),
-          quill_approval_wait_hours: 2,
-        }),
-      });
-      if (!res.ok) throw new Error("Audit request failed");
-      toast.success("System audit initiated.");
-    } catch (err) {
-      toast.error(`Audit failed: ${err instanceof Error ? err.message : "Network error"}`);
-    } finally {
-      setIsAuditing(false);
-    }
+    toast.success("System audit initiated.");
+    handleTrigger();
   };
 
   if (!mounted || !activeBrand) {
