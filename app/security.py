@@ -29,7 +29,7 @@ AUTH_BYPASS = os.getenv("AUTH_BYPASS", "false").lower() == "true"
 _BYPASS_USER = {
     "sub": "dev-user-001",
     "email": "developer@autopilot.local",
-    "name": "Dev User",
+    "name": "Harshal",
     "preferred_username": "dev-user",
     "realm_access": {"roles": ["admin", "user"]},
     "active": True,

@@ -15,7 +15,7 @@ const authOptions: AuthOptions = {
         // Auto-authenticate as Dev User — no real credentials needed
         return {
           id: 'dev-user-001',
-          name: 'Dev User',
+          name: 'Harshal',
           email: 'dev@autopilot.local',
         }
       },
