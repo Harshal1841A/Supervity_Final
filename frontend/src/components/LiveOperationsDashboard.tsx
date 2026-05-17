@@ -300,7 +300,7 @@ export default function LiveOperationsDashboard() {
         });
       })
       .catch(() => {});
-  }, []);
+  }, [activeBrand]);
 
 
   // ── SSE Stream reader (live mode) ──
@@ -496,7 +496,7 @@ export default function LiveOperationsDashboard() {
             if (km.crisis_probability) kpiPatch.crisisProb = km.crisis_probability;
             if (Object.keys(kpiPatch).length > 0) {
               setKpis(prev => ({ ...prev, ...kpiPatch }));
-              fetch("/api/dashboard/kpis", {
+              fetch(`/api/dashboard/kpis?brandId=${activeBrand.id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ...kpiPatch, runId }),
@@ -505,7 +505,11 @@ export default function LiveOperationsDashboard() {
           }
 
           // Enqueue workbench task if agent is pending human approval
-          if (String(statusRaw).toLowerCase() === "pending_human") {
+          if (
+            statusRaw === "pending_human" ||
+            statusRaw === "human-input-required" ||
+            statusRaw === "node-paused"
+          ) {
             const taskPayload = {
               id: `${String(agentName).toLowerCase()}-${Date.now()}`,
               agent: String(agentName),
@@ -561,15 +565,22 @@ export default function LiveOperationsDashboard() {
       return;
     }
     try {
-      const res = await fetch("/api/agents/webhook", {
+      const res = await fetch("/api/agents/trigger", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          taskId:           "system_audit",
-          decision:         "approve",
-          brand_name:       activeBrand.name,
-          campaignStateUrl: activeBrand.hubspotUrl,
-          comments: `System audit triggered from Command Center at ${new Date().toISOString()}`,
+          agent: "ATLAS",
+          brand_name: activeBrand.name,
+          trigger_source: "manual",
+          trigger_reason: `System audit triggered from Command Center at ${new Date().toISOString()}`,
+          campaign_state_url: activeBrand.hubspotUrl,
+          share_of_voice_drop_pp: activeBrand.sovDrop,
+          crisis_probability: activeBrand.crisisProb / 100,
+          wasted_spend_inr: activeBrand.wasteInr,
+          current_cac_inr: activeBrand.currentCac,
+          target_cac_inr: activeBrand.targetCac,
+          proposed_spend_change_inr: Math.round(activeBrand.wasteInr * 0.5),
+          quill_approval_wait_hours: 2,
         }),
       });
       if (!res.ok) throw new Error("Audit request failed");

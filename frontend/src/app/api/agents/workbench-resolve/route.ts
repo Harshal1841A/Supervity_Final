@@ -70,11 +70,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Supervity returned ${supervityRes.status}` }, { status: 502 });
     }
 
-    // Since Supervity returns an SSE stream, we can just return success 
-    // immediately to unblock the UI.
+    // CRITICAL: Drain the SSE body completely before returning.
+    // Without this, the TCP connection stays open forever → socket pool exhaustion after ~10 calls.
+    if (supervityRes.body) {
+      const reader = supervityRes.body.getReader();
+      while (true) {
+        const { done } = await reader.read();
+        if (done) break;
+      }
+    }
+
     return NextResponse.json({ success: true, message: `Action ${action} synced with Supervity for ${agent}` });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error in workbench-resolve:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
