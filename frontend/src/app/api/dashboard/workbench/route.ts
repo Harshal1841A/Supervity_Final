@@ -23,7 +23,7 @@ export async function GET() {
   });
 
   // Map to frontend expected shape
-  const formattedTasks = tasks.map(t => ({
+  const formattedTasks = tasks.map((t: any) => ({
     ...t,
     brand_name: t.brand ? t.brand.name : "GrowthPilot Default",
   }));
