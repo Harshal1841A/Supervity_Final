@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     const workflowId = WORKFLOW_IDS[agentName];
     
     // Construct inputs for the autonomous workflow
-    const inputs = {
+    let inputs: Record<string, string | number | undefined | null> = {
       brand_name: brandName || "GrowthPilot Default",
       trigger_source: "workbench",
       trigger_reason: `Human-in-the-Loop Decision: ${action}`,
@@ -29,6 +29,29 @@ export async function POST(req: NextRequest) {
       human_approved: action === "APPROVE" ? "true" : "false",
       decision_action: action
     };
+
+    // Brutally enforce required parameters based on the specific agent being resolved
+    switch (agentName) {
+      case "VANGUARD":
+        inputs.competitor_name = "Competitor";
+        inputs.sentry_severity = "medium";
+        inputs.conquest_budget_requested_inr = action === "APPROVE" ? 50000 : 0;
+        break;
+      case "HELIOS":
+        inputs.slack_channel = "#growthpilot-ops";
+        break;
+      case "ORACLE":
+        inputs.search_query = `${inputs.brand_name} brand sentiment`;
+        inputs.search_type = "web";
+        inputs.max_results = 10;
+        inputs.caller_agent = "Workbench";
+        break;
+      case "HERALD":
+      case "LEDGER":
+        inputs.slack_channel_ops = "#growthpilot-ops";
+        inputs.slack_channel_errors = "#growthpilot-errors";
+        break;
+    }
 
     const formData = buildFormData(workflowId, inputs);
 

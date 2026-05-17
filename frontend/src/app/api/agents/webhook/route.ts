@@ -98,6 +98,8 @@ export async function POST(req: NextRequest) {
         sentry_severity:               "medium",
         campaign_state_url:            "https://app.hubspot.com/contacts",
         conquest_budget_requested_inr: decision === "approve" ? 50000 : 0,
+        human_approved:                decision === "approve" ? "true" : "false",
+        decision_action:               decision.toUpperCase(),
       };
       break;
 
@@ -108,6 +110,8 @@ export async function POST(req: NextRequest) {
         trigger_source:     "human_approval",
         trigger_reason:     reason,
         campaign_state_url: "https://app.hubspot.com/contacts",
+        human_approved:     decision === "approve" ? "true" : "false",
+        decision_action:    decision.toUpperCase(),
       };
       break;
 
@@ -117,24 +121,30 @@ export async function POST(req: NextRequest) {
         trigger_source:     "human_approval",
         trigger_reason:     reason,
         campaign_state_url: "https://app.hubspot.com/contacts",
+        human_approved:     decision === "approve" ? "true" : "false",
+        decision_action:    decision.toUpperCase(),
       };
       break;
 
     case "ATLAS":
       // System audit — trigger full orchestration
       inputs = {
-        brand_name:     brand,
-        trigger_source: "human_approval",
-        trigger_reason: reason,
+        brand_name:         brand,
+        trigger_source:     "human_approval",
+        trigger_reason:     reason,
         campaign_state_url: "https://app.hubspot.com/contacts",
+        human_approved:     decision === "approve" ? "true" : "false",
+        decision_action:    decision.toUpperCase(),
       };
       break;
 
     default:
       inputs = {
-        brand_name:     brand,
-        trigger_source: "human_approval",
-        trigger_reason: reason,
+        brand_name:         brand,
+        trigger_source:     "human_approval",
+        trigger_reason:     reason,
+        human_approved:     decision === "approve" ? "true" : "false",
+        decision_action:    decision.toUpperCase(),
       };
   }
 

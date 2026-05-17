@@ -61,6 +61,8 @@ export interface BaseInputs {
   trigger_source: string;
   trigger_reason: string;
   campaign_state_url?: string;
+  human_approved?: string;
+  decision_action?: string;
 }
 
 /**
