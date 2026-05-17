@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import type { BrandData } from "@/lib/brands";
 import {
@@ -16,6 +16,7 @@ import {
   Target,
   X,
   Zap,
+  Loader2,
 } from "lucide-react";
 
 // ─── Theme (Snow White Enterprise Light Mode) ─────────────────────────────────
@@ -37,12 +38,11 @@ const T = {
   btnText:    "#FFFFFF",
 };
 
-
-
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AgentTask {
   id: string;
-  agent: string;
+  agentId: string;
+  title: string;
   priority: "HIGH" | "MEDIUM" | "LOW";
   message: string;
   time: string;
@@ -50,15 +50,13 @@ interface AgentTask {
   icon: LucideIcon;
 }
 
-// ─── Agent icon resolver (based on agent name, no hardcoded data needed) ──────
-function getAgentIcon(agentName: string): LucideIcon {
-  const n = agentName.toLowerCase();
-  if (n.includes("vanguard") || n.includes("conquest")) return Target;
-  if (n.includes("helios") || n.includes("audit")  || n.includes("spend")) return DollarSign;
-  if (n.includes("quill")  || n.includes("publish") || n.includes("content")) return FileText;
-  if (n.includes("sentry") || n.includes("crisis") || n.includes("brand")) return Shield;
-  if (n.includes("ledger") || n.includes("cac")) return DollarSign;
-  if (n.includes("herald") || n.includes("report")) return CheckCircle2;
+// ─── Agent icon resolver ──────────────────────────────────────────────────────
+function getAgentIcon(agentId: string): LucideIcon {
+  const n = agentId.toLowerCase();
+  if (n.includes("vanguard")) return Target;
+  if (n.includes("helios")) return DollarSign;
+  if (n.includes("quill")) return FileText;
+  if (n.includes("sentry")) return Shield;
   return Zap;
 }
 
@@ -68,31 +66,58 @@ const PRIORITY_COLOR: Record<string, string> = {
   LOW:    "#64748B",
 };
 
-
-// ─── Brand-aware dynamic alerts — generated from BrandData metrics ────────────
-function buildBrandAlerts(brand: BrandData): Array<{ id: string; agent: string; priority: "HIGH"|"MEDIUM"|"LOW"; message: string; time: string; brand_name: string }> {
-  const alerts: Array<{ id: string; agent: string; priority: "HIGH"|"MEDIUM"|"LOW"; message: string; time: string; brand_name: string }> = [];
+// ─── Brand-aware dynamic alerts — strict data-driven generation ───────────────
+function buildBrandAlerts(brand: BrandData): AgentTask[] {
+  const alerts: AgentTask[] = [];
 
   if (brand.wasteInr > 100000) {
-    alerts.push({ id: `helios-waste-${brand.id}`, agent: "Helios", priority: "HIGH",
-      message: `Helios Audit: Reallocate ₹${brand.wasteInr.toLocaleString("en-IN")} in wasted ad spend.`,
-      time: "just now", brand_name: brand.name });
+    alerts.push({ 
+      id: `helios-waste-${brand.id}`, 
+      agentId: "helios", 
+      title: "Helios Audit",
+      priority: "HIGH",
+      message: `Reallocate ₹${brand.wasteInr.toLocaleString("en-IN")} in wasted ad spend.`,
+      time: "just now", 
+      brand_name: brand.name,
+      icon: getAgentIcon("helios")
+    });
   }
 
   if (brand.sovDrop >= 5 && brand.crisisProb < 70) {
-    alerts.push({ id: `vanguard-sov-${brand.id}`, agent: "Vanguard", priority: "HIGH",
-      message: `Vanguard Conquest: ${brand.sovDrop}pp SOV drop detected. Approve ₹50,000 for attack campaign.`,
-      time: "just now", brand_name: brand.name });
+    alerts.push({ 
+      id: `vanguard-sov-${brand.id}`, 
+      agentId: "vanguard", 
+      title: "Vanguard Conquest",
+      priority: "HIGH",
+      message: `${brand.sovDrop}pp SOV drop detected. Approve ₹50,000 for attack campaign.`,
+      time: "just now", 
+      brand_name: brand.name,
+      icon: getAgentIcon("vanguard")
+    });
   }
 
   if (brand.crisisProb >= 70) {
-    alerts.push({ id: `sentry-crisis-${brand.id}`, agent: "Sentry", priority: "HIGH",
+    alerts.push({ 
+      id: `sentry-crisis-${brand.id}`, 
+      agentId: "sentry", 
+      title: "Sentry Override",
+      priority: "HIGH",
       message: `System Paused. Crisis probability at ${brand.crisisProb}%. Human intervention required.`,
-      time: "just now", brand_name: brand.name });
+      time: "just now", 
+      brand_name: brand.name,
+      icon: getAgentIcon("sentry")
+    });
   } else {
-    alerts.push({ id: `quill-content-${brand.id}`, agent: "Quill-2", priority: "MEDIUM",
-      message: `Quill-2: Approve cross-channel content for auto-publish.`,
-      time: "just now", brand_name: brand.name });
+    alerts.push({ 
+      id: `quill-content-${brand.id}`, 
+      agentId: "quill", 
+      title: "Quill-2 Content",
+      priority: "MEDIUM",
+      message: `Approve cross-channel content for auto-publish.`,
+      time: "just now", 
+      brand_name: brand.name,
+      icon: getAgentIcon("quill")
+    });
   }
 
   return alerts;
@@ -103,6 +128,14 @@ export default function AIWorkbench() {
   const [brands, setBrands] = useState<BrandData[]>([]);
   const [activeBrand, setActiveBrand] = useState<BrandData | null>(null);
   const [isBrandOpen, setIsBrandOpen] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
+  const [activeId, setActiveId] = useState<string>("");
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [actionedIds, setActionedIds] = useState<Set<string>>(new Set());
+
+  // Mark mounted — prevents hydration mismatch
+  useEffect(() => { setMounted(true); }, []);
 
   // Fetch brands from DB-backed API
   useEffect(() => {
@@ -123,36 +156,12 @@ export default function AIWorkbench() {
     localStorage.setItem("nexus_activeBrandId", b.id);
     setIsBrandOpen(false);
   };
-  const [demoMode, setDemoMode] = useState(false);
   
   // Sync demoMode with localStorage
   useEffect(() => {
     const savedDemo = localStorage.getItem("nexus_demoMode");
     if (savedDemo === "true") setDemoMode(true);
   }, []);
-
-  const [queue, setQueue] = useState<AgentTask[]>([]);
-  const [activeId, setActiveId] = useState<string>("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isLoadingQueue, setIsLoadingQueue] = useState(true);
-  const [mounted, setMounted] = useState(false);
-  const [actionedIds, setActionedIds] = useState<Set<string>>(new Set());
-
-  // Mark mounted — prevents hydration mismatch
-  useEffect(() => { setMounted(true); }, []);
-
-  // Merge API queue with live brand-specific alerts
-  const brandAlerts = activeBrand ? buildBrandAlerts(activeBrand) : [];
-  const apiIds = new Set(queue.map(q => q.id));
-  const brandAlertTasks: AgentTask[] = brandAlerts
-    .filter(a => !apiIds.has(a.id) && !actionedIds.has(a.id))
-    .map(a => ({ ...a, icon: getAgentIcon(a.agent) }));
-  const displayQueue = [...brandAlertTasks, ...queue.filter(q => (!q.brand_name || q.brand_name === activeBrand?.name) && !actionedIds.has(q.id))];
-
-  const selected = displayQueue.find(q => q.id === activeId) ?? null;
-
-  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const prevQueueIds = useRef<Set<string>>(new Set());
 
   // Alt+G → toggle God Mode
   useEffect(() => {
@@ -171,101 +180,105 @@ export default function AIWorkbench() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Generate queue purely from activeBrand metrics (ZERO fake data)
+  const displayQueue = activeBrand 
+    ? buildBrandAlerts(activeBrand).filter(t => !actionedIds.has(t.id))
+    : [];
+
+  const selected = displayQueue.find(q => q.id === activeId) ?? null;
+
   // Auto-select first brand alert when brand changes
   useEffect(() => {
-    if (!activeBrand) return;
-    const alerts = buildBrandAlerts(activeBrand);
-    if (alerts.length > 0) setActiveId(alerts[0].id);
-  }, [activeBrand]);
+    if (displayQueue.length > 0 && !displayQueue.some(q => q.id === activeId)) {
+      setActiveId(displayQueue[0].id);
+    } else if (displayQueue.length === 0) {
+      setActiveId("");
+    }
+  }, [displayQueue, activeId]);
 
-  const fetchQueue = useCallback((silent = false) => {
-    if (!silent) setIsLoadingQueue(true);
-    fetch("/api/dashboard/workbench")
-      .then(r => r.ok ? r.json() : [])
-      .then((tasks: Array<{ id: string; agent: string; priority: string; message: string; time: string; brand_name?: string }>) => {
-        const mapped: AgentTask[] = tasks.map(t => ({
-          ...t,
-          priority: (t.priority as "HIGH" | "MEDIUM" | "LOW") || "MEDIUM",
-          icon: getAgentIcon(t.agent),
-        }));
-        setQueue(mapped);
-        
-        // Auto-select: prefer first brand alert, then first API task for the current brand
-        setActiveId(prev => {
-          if (!activeBrand) return prev;
-          const brandQueue = mapped.filter(q => !q.brand_name || q.brand_name === activeBrand.name);
-          const allItems = [...buildBrandAlerts(activeBrand).map(a => ({ id: a.id })), ...brandQueue];
-          const stillExists = allItems.some(t => t.id === prev);
-          if (!stillExists && allItems.length > 0) return allItems[0].id;
-          if (!prev && allItems.length > 0) return allItems[0].id;
-          return prev;
-        });
-        // Track new arrivals
-        const currentIds = new Set(mapped.map(t => t.id));
-        prevQueueIds.current = currentIds;
-      })
-      .catch(() => {})
-      .finally(() => { if (!silent) setIsLoadingQueue(false); });
-  }, [activeBrand]);
+  const customToastStyle = {
+    background: T.primary,
+    color: T.bg,
+    border: `1px solid ${T.cardBorder}`,
+    fontSize: '14px',
+    fontFamily: 'monospace',
+    letterSpacing: '0.05em'
+  };
 
-  // Initial load + live poll every 5 seconds
-  useEffect(() => {
-    fetchQueue(false);
-    pollingRef.current = setInterval(() => fetchQueue(true), 5000);
-    return () => { if (pollingRef.current) clearInterval(pollingRef.current); };
-  }, [fetchQueue]);
-
-
-  // ── Action Handler (with 800ms God Mode bypass) ──
-  const handleAction = async (action: "APPROVE" | "REJECT") => {
-    if (!activeId || isProcessing) return;
-    setIsProcessing(true);
+  // ── Action Handlers ──
+  const handleApprove = async (task: AgentTask) => {
+    if (processingId) return;
+    setProcessingId(task.id);
+    
     if (demoMode) {
-      await new Promise(r => setTimeout(r, 800));
-      toast.success(`[DEMO] ${action} — ${selected?.agent ?? "Agent"} decision recorded.`);
-      setActionedIds(prev => new Set(prev).add(activeId));
-      const remaining = displayQueue.filter(q => q.id !== activeId);
-      setActiveId(remaining[0]?.id ?? "");
-      setIsProcessing(false);
+      setTimeout(() => {
+        toast.success(`[DEMO] ${task.agentId.toUpperCase()} Approved. Workflow resuming.`, { style: customToastStyle });
+        setActionedIds(prev => new Set(prev).add(task.id));
+        setProcessingId(null);
+      }, 1200);
       return;
     }
+
     try {
-      const res = await fetch("/api/agents/webhook", {
+      const res = await fetch("/api/agents/workbench-resolve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          taskId:    activeId,
-          decision:  action.toLowerCase(),   // "approve" | "reject"
-          brand_name: selected?.brand_name,
-          comments:  `${action} via GrowthPilot OS Workbench at ${new Date().toISOString()}`,
+          action: "APPROVE",
+          agent: task.agentId,
+          brandName: activeBrand?.name,
+          hubspotUrl: activeBrand?.hubspotUrl,
         }),
       });
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
         throw new Error(err.error || `HTTP ${res.status}`);
       }
-      const data = await res.json();
-      toast.success(
-        data.confirmed
-          ? `${action} — ${data.agent} workflow triggered. Execution resuming.`
-          : `${action} — Decision recorded. Agents notified.`
-      );
-
-      setActionedIds(prev => new Set(prev).add(activeId));
-      const remaining = displayQueue.filter(q => q.id !== activeId);
-      setActiveId(remaining[0]?.id ?? "");
-      // Remove from persistent store (API items only)
-      if (queue.find(q => q.id === activeId)) {
-        fetch(`/api/dashboard/workbench?id=${encodeURIComponent(activeId)}`, { method: "DELETE" }).catch(() => {});
-      }
+      toast.success(`${task.agentId.toUpperCase()} workflow triggered. Execution resuming.`, { style: customToastStyle });
+      setActionedIds(prev => new Set(prev).add(task.id));
     } catch (err) {
-      toast.error(`Failed: ${err instanceof Error ? err.message : "Network error"}`);
+      toast.error(`Failed to sync: ${err instanceof Error ? err.message : "Network error"}`);
     } finally {
-      setIsProcessing(false);
+      setProcessingId(null);
     }
   };
 
-  // Render a stable skeleton before client mount (prevents hydration mismatch)
+  const handleReject = async (task: AgentTask) => {
+    if (processingId) return;
+    setProcessingId(task.id);
+    
+    if (demoMode) {
+      setTimeout(() => {
+        toast.error(`[DEMO] ${task.agentId.toUpperCase()} decision rejected.`, { style: customToastStyle });
+        setActionedIds(prev => new Set(prev).add(task.id));
+        setProcessingId(null);
+      }, 800);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/agents/workbench-resolve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "REJECT",
+          agent: task.agentId,
+          brandName: activeBrand?.name,
+          hubspotUrl: activeBrand?.hubspotUrl,
+        }),
+      });
+      if (!res.ok) throw new Error("Approval failed");
+      toast.error(`${task.agentId.toUpperCase()} decision rejected. Agents notified.`, { style: customToastStyle });
+      setActionedIds(prev => new Set(prev).add(task.id));
+    } catch (err) {
+      toast.error(`Failed to sync: ${err instanceof Error ? err.message : "Network error"}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  // Render a stable skeleton before client mount
   if (!mounted) {
     return (
       <div style={{ backgroundColor: T.bg, minHeight: "100vh", padding: 24 }}>
@@ -303,7 +316,7 @@ export default function AIWorkbench() {
         <div>
           <h1 style={{ color: T.primary, fontSize: 26, fontWeight: 300, letterSpacing: "-0.02em", margin: 0, display: "flex", alignItems: "center", gap: 12 }}>
             {demoMode && (
-              <div title="God Mode ON (Alt+G)" style={{ width: 2, height: 2, borderRadius: "50%", backgroundColor: "#F7E7CE", boxShadow: `0 0 4px #F7E7CE`, flexShrink: 0 }} />
+              <div title="God Mode ON (Alt+G)" style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: T.primary, boxShadow: `0 0 4px ${T.cardBorder}`, flexShrink: 0 }} />
             )}
             <Shield size={24} stroke={T.primary} strokeWidth={1.5} />
             AI Workbench
@@ -331,7 +344,7 @@ export default function AIWorkbench() {
             <div style={{
               position: "absolute", top: "calc(100% + 4px)", right: 0, width: 160,
               backgroundColor: T.card, border: `1px solid ${T.cardBorder}`, borderRadius: 8,
-              overflow: "hidden", zIndex: 50, boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
+              overflow: "hidden", zIndex: 50, boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
             }}>
               {brands.map(b => (
                 <button key={b.id}
@@ -369,27 +382,7 @@ export default function AIWorkbench() {
             Pending Approvals ({displayQueue.length})
           </p>
 
-          {isLoadingQueue ? (
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                border: `1px dashed ${T.cardBorder}`,
-                borderRadius: 12,
-                color: T.muted,
-                gap: 10,
-                minHeight: 200,
-              }}
-            >
-              <Zap size={28} className="animate-pulse" style={{ opacity: 0.35 } as React.CSSProperties} />
-              <p style={{ fontSize: 12, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                Loading Workbench...
-              </p>
-            </div>
-          ) : displayQueue.length === 0 ? (
+          {displayQueue.length === 0 ? (
             <div
               style={{
                 flex: 1,
@@ -413,7 +406,9 @@ export default function AIWorkbench() {
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {displayQueue.map(item => {
                 const isActive = item.id === activeId;
-                const Icon: LucideIcon = item.icon;
+                const Icon = item.icon;
+                const isItemProcessing = processingId === item.id;
+                
                 return (
                   <button
                     key={item.id}
@@ -430,6 +425,7 @@ export default function AIWorkbench() {
                       position: "relative",
                       overflow: "hidden",
                       transition: "all 0.15s ease",
+                      opacity: isItemProcessing ? 0.7 : 1,
                     }}
                     onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = T.hover; }}
                     onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = "transparent"; }}
@@ -450,9 +446,13 @@ export default function AIWorkbench() {
                     {/* Top row: agent + time */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <Icon size={13} stroke={T.primary} strokeWidth={1.5} />
+                        {isItemProcessing ? (
+                          <Loader2 size={13} className="animate-spin text-slate-800" strokeWidth={2} />
+                        ) : (
+                          <Icon size={13} stroke={T.primary} strokeWidth={1.5} />
+                        )}
                         <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.07em", color: T.primary }}>
-                          [{item.agent}]
+                          [{item.agentId.toUpperCase()}]
                         </span>
                       </div>
                       <span style={{ fontSize: 10, fontFamily: "monospace", color: T.muted, display: "flex", alignItems: "center", gap: 4 }}>
@@ -461,6 +461,8 @@ export default function AIWorkbench() {
                       </span>
                     </div>
 
+                    <h3 style={{ fontSize: 14, fontWeight: 500, color: T.primary, marginBottom: 4 }}>{item.title}</h3>
+                    
                     {/* Message */}
                     <p
                       style={{
@@ -528,6 +530,7 @@ export default function AIWorkbench() {
                 overflow: "hidden",
                 display: "flex",
                 flexDirection: "column",
+                position: "relative",
               }}
             >
               {/* Detail header */}
@@ -535,7 +538,7 @@ export default function AIWorkbench() {
                 style={{
                   padding: "22px 26px",
                   borderBottom: `1px solid ${T.cardBorder}`,
-                  background: "rgba(0,0,0,0.18)",
+                  background: "rgba(0,0,0,0.02)",
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
@@ -561,12 +564,9 @@ export default function AIWorkbench() {
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                  {(() => {
-                    const SelectedIcon: LucideIcon = selected.icon;
-                    return <SelectedIcon size={26} stroke={T.primary} strokeWidth={1.5} style={{ opacity: 0.8 } as React.CSSProperties} />;
-                  })()}
+                  <selected.icon size={26} stroke={T.primary} strokeWidth={1.5} style={{ opacity: 0.8 } as React.CSSProperties} />
                   <h2 style={{ color: T.primary, fontSize: 20, fontWeight: 300, letterSpacing: "-0.01em", margin: 0 }}>
-                    {selected.agent}
+                    {selected.title}
                   </h2>
                 </div>
               </div>
@@ -613,7 +613,7 @@ export default function AIWorkbench() {
                     </p>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                       {[
-                        { label: "Node", value: selected.agent },
+                        { label: "Node", value: selected.agentId },
                         { label: "Channel", value: "HubSpot CRM" },
                         { label: "Confidence", value: "94%" },
                       ].map(({ label, value }) => (
@@ -647,9 +647,8 @@ export default function AIWorkbench() {
                 >
                   {/* REJECT */}
                   <button
-                    id="btn-reject"
-                    onClick={() => handleAction("REJECT")}
-                    disabled={isProcessing}
+                    onClick={() => handleReject(selected)}
+                    disabled={!!processingId}
                     style={{
                       height: 88,
                       borderRadius: 12,
@@ -659,8 +658,8 @@ export default function AIWorkbench() {
                       fontSize: 17,
                       fontWeight: 700,
                       letterSpacing: "0.1em",
-                      cursor: isProcessing ? "not-allowed" : "pointer",
-                      opacity: isProcessing ? 0.5 : 1,
+                      cursor: !!processingId ? "not-allowed" : "pointer",
+                      opacity: !!processingId ? 0.5 : 1,
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
@@ -668,18 +667,17 @@ export default function AIWorkbench() {
                       gap: 6,
                       transition: "background 0.15s",
                     }}
-                    onMouseEnter={e => { if (!isProcessing) e.currentTarget.style.backgroundColor = T.dangerBg; }}
+                    onMouseEnter={e => { if (!processingId) e.currentTarget.style.backgroundColor = T.dangerBg; }}
                     onMouseLeave={e => { e.currentTarget.style.backgroundColor = "transparent"; }}
                   >
-                    <X size={22} strokeWidth={2.5} />
+                    {processingId === selected.id ? <Loader2 size={22} className="animate-spin" /> : <X size={22} strokeWidth={2.5} />}
                     REJECT
                   </button>
 
                   {/* APPROVE */}
                   <button
-                    id="btn-approve"
-                    onClick={() => handleAction("APPROVE")}
-                    disabled={isProcessing}
+                    onClick={() => handleApprove(selected)}
+                    disabled={!!processingId}
                     style={{
                       height: 88,
                       borderRadius: 12,
@@ -689,8 +687,8 @@ export default function AIWorkbench() {
                       fontSize: 17,
                       fontWeight: 700,
                       letterSpacing: "0.1em",
-                      cursor: isProcessing ? "not-allowed" : "pointer",
-                      opacity: isProcessing ? 0.5 : 1,
+                      cursor: !!processingId ? "not-allowed" : "pointer",
+                      opacity: !!processingId ? 0.5 : 1,
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
@@ -698,21 +696,13 @@ export default function AIWorkbench() {
                       gap: 6,
                       transition: "background 0.15s",
                     }}
-                    onMouseEnter={e => { if (!isProcessing) e.currentTarget.style.backgroundColor = T.successBg; }}
+                    onMouseEnter={e => { if (!processingId) e.currentTarget.style.backgroundColor = T.successBg; }}
                     onMouseLeave={e => { e.currentTarget.style.backgroundColor = "transparent"; }}
                   >
-                    <Check size={22} strokeWidth={2.5} />
+                    {processingId === selected.id ? <Loader2 size={22} className="animate-spin" /> : <Check size={22} strokeWidth={2.5} />}
                     APPROVE
                   </button>
                 </div>
-
-                {/* Processing state */}
-                {isProcessing && (
-                  <p style={{ color: T.muted, fontSize: 11, fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.12em", textAlign: "center", marginTop: 14 }}>
-                    <Zap size={12} style={{ display: "inline", marginRight: 5, verticalAlign: "middle" } as React.CSSProperties} />
-                    Communicating with agents…
-                  </p>
-                )}
               </div>
             </div>
           ) : (
@@ -736,8 +726,6 @@ export default function AIWorkbench() {
           )}
         </div>
       </div>
-
-
     </div>
   );
 }
