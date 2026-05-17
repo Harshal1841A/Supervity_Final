@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import type { BrandData } from "@/lib/brands";
 import {
@@ -164,16 +164,19 @@ export default function AIWorkbench() {
   }, []);
 
   // Alt+G → toggle God Mode
+  const demoModeRef = useRef(demoMode);
+  useEffect(() => {
+    demoModeRef.current = demoMode;
+  }, [demoMode]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.altKey && (e.key.toLowerCase() === "g" || e.code === "KeyG")) {
-        setDemoMode(d => {
-          const newVal = !d;
-          localStorage.setItem("nexus_demoMode", newVal.toString());
-          if (newVal) toast.success("God Mode Activated");
-          else toast.error("God Mode Deactivated");
-          return newVal;
-        });
+        const newVal = !demoModeRef.current;
+        localStorage.setItem("nexus_demoMode", newVal.toString());
+        if (newVal) toast.success("God Mode Activated");
+        else toast.error("God Mode Deactivated");
+        setDemoMode(newVal);
       }
     };
     window.addEventListener("keydown", onKey);
