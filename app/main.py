@@ -43,6 +43,7 @@ from .routers import (
     health_router,
     items_router,
 )
+from .routers.supervity import supervity_router
 from .security import get_current_user, verify_access
 
 log = logging.getLogger(__name__)
@@ -153,6 +154,9 @@ api_router.include_router(items_router)
 
 # Authorization pattern examples
 api_router.include_router(examples_router)
+
+# Supervity API integration
+api_router.include_router(supervity_router)
 
 
 # =============================================================================

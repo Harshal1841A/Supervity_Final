@@ -112,7 +112,7 @@ function ErrorContent() {
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
         className='w-full max-w-md'
       >
-        <Card className='relative overflow-hidden bg-white shadow-float-lg'>
+        <Card className='relative overflow-hidden bg-card shadow-float-lg'>
           <CardWatermark opacity={4} scale={1} />
           <CardHeader className='relative z-10 space-y-4 pb-6 text-center'>
             <motion.div

@@ -270,7 +270,7 @@ export default function GroupsPage() {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -10 }}
-                        className='border-b last:border-0 hover:bg-gray-50'
+                        className='border-b last:border-0 hover:bg-accent'
                       >
                         <td className='py-4'>
                           <div 
@@ -280,7 +280,7 @@ export default function GroupsPage() {
                             {depth > 0 && (
                               <Icons.arrowRight className='h-3 w-3 text-gray-400' />
                             )}
-                            <Icons.network className='h-4 w-4 text-blue-600' />
+                            <Icons.network className='h-4 w-4 text-brand-cornflower' />
                             <span className='font-medium'>{group.name}</span>
                           </div>
                         </td>

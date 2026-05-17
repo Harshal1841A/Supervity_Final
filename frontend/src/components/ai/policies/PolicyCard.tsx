@@ -122,7 +122,7 @@ export function PolicyCard({ policy, onClick }: PolicyCardProps) {
       onClick={() => onClick(policy)}
       className={cn(
         'relative h-[200px] rounded-xl border cursor-pointer',
-        'bg-white',
+        'bg-card',
         'flex flex-col group',
         !policy.is_active && 'opacity-60'
       )}
@@ -162,7 +162,7 @@ export function PolicyCard({ policy, onClick }: PolicyCardProps) {
           className={cn(
             'flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase flex-shrink-0',
             isLogical
-              ? 'bg-blue-100 text-blue-700'
+              ? 'bg-blue-100 text-brand-cornflower'
               : 'bg-purple-100 text-purple-700'
           )}
           whileHover={{ scale: 1.05 }}
@@ -197,7 +197,7 @@ export function PolicyCard({ policy, onClick }: PolicyCardProps) {
               return (
                 <span
                   key={`cond-${idx}`}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-blue-50 text-blue-700 border border-blue-100"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-blue-50 text-brand-cornflower border border-blue-100"
                 >
                   <span className="font-medium">{cond.field.replace(/_/g, ' ')}</span>
                   <span className="text-blue-500">{opInfo.symbol}</span>
@@ -229,7 +229,7 @@ export function PolicyCard({ policy, onClick }: PolicyCardProps) {
       </div>
       
       {/* Footer - Fixed at bottom */}
-      <div className="relative flex items-center justify-between px-4 py-3 border-t border-gray-100 mt-auto bg-gray-50/50 rounded-b-xl">
+      <div className="relative flex items-center justify-between px-4 py-3 border-t border-gray-100 mt-auto bg-accent/50 rounded-b-xl">
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span>{formatDate(policy.created_at)}</span>
           {policy.execution_count > 0 && (

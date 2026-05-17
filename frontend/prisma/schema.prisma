@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id          String          @id @default(cuid())
+  name        String
+  hubspotUrl  String
+  sovDrop     Float           @default(0)
+  crisisProb  Float           @default(0)
+  wasteInr    Float           @default(0)
+  currentCac  Float           @default(0)
+  targetCac   Float           @default(0)
+  tasks       WorkbenchTask[]
+}
+
+model LogEntry {
+  id           String   @id @default(cuid())
+  agent        String
+  status       String
+  action_taken String
+  key_metrics  String?  // Storing JSON as string in SQLite
+  timestamp    DateTime @default(now())
+  run_id       String?
+}
+
+model WorkbenchTask {
+  id         String   @id @default(cuid())
+  agent      String
+  priority   String   // "HIGH" | "MEDIUM" | "LOW"
+  message    String
+  time       String
+  status     String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  
+  brandId    String?
+  brand      Brand?   @relation(fields: [brandId], references: [id])
+}

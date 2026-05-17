@@ -9,7 +9,6 @@ export interface Pattern {
   confidence: number
   sample_size?: number
   description?: string
-  is_demo?: boolean
 }
 
 interface PatternClusterProps {
@@ -38,8 +37,8 @@ export function PatternCluster({ patterns }: PatternClusterProps) {
           key={idx}
           className={cn(
             'flex items-center gap-4 rounded-xl p-4',
-            'bg-white/50 border border-border/50',
-            'transition-all duration-200 hover:bg-white hover:shadow-soft'
+            'bg-card/50 border border-border/50',
+            'transition-all duration-200 hover:bg-card hover:shadow-soft'
           )}
         >
           {/* Icon */}

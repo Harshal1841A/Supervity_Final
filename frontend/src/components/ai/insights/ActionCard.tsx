@@ -10,7 +10,6 @@ export interface ActionItem {
   estimated_impact: string
   action_type?: string
   action_config?: Record<string, unknown>
-  is_demo?: boolean
 }
 
 interface ActionCardProps {
@@ -20,24 +19,24 @@ interface ActionCardProps {
 
 const priorityConfig = {
   critical: {
-    color: 'text-red-700',
-    bg: 'bg-red-200',
-    badge: 'bg-red-200 text-red-800',
+    color: 'text-red-400',
+    bg: 'bg-red-500/20',
+    badge: 'bg-red-500/25 text-red-300',
   },
   high: {
-    color: 'text-red-600',
-    bg: 'bg-red-100',
-    badge: 'bg-red-100 text-red-700',
+    color: 'text-red-400',
+    bg: 'bg-red-500/15',
+    badge: 'bg-red-500/20 text-red-300',
   },
   medium: {
-    color: 'text-amber-600',
-    bg: 'bg-amber-100',
-    badge: 'bg-amber-100 text-amber-700',
+    color: 'text-amber-400',
+    bg: 'bg-amber-500/15',
+    badge: 'bg-amber-500/20 text-amber-300',
   },
   low: {
-    color: 'text-blue-600',
-    bg: 'bg-blue-100',
-    badge: 'bg-blue-100 text-blue-700',
+    color: 'text-brand-cornflower',
+    bg: 'bg-brand-cornflower/15',
+    badge: 'bg-brand-cornflower/20 text-sky-200',
   },
 }
 
@@ -47,8 +46,8 @@ export function ActionCard({ action, onApply }: ActionCardProps) {
   return (
     <div className={cn(
       'flex items-center gap-4 rounded-xl p-4',
-      'bg-white/70 border border-border/50',
-      'transition-all duration-200 hover:bg-white hover:shadow-soft'
+      'bg-card/70 border border-border/50',
+      'transition-all duration-200 hover:bg-card hover:shadow-soft'
     )}>
       {/* Icon */}
       <div className={cn(

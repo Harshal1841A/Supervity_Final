@@ -190,7 +190,7 @@ function ConflictResolution({
                       'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                       selectedConflicts.has(conflict.conflicting_rule_id)
                         ? 'bg-red-100 border-red-300'
-                        : 'bg-white border-red-100 hover:bg-red-50'
+                        : 'bg-card border-red-100 hover:bg-red-50'
                     )}
                   >
                     <input
@@ -269,7 +269,7 @@ function AISuggestions({
               'w-full flex items-start gap-3 p-4 rounded-xl border text-left transition-all',
               selected === instruction
                 ? 'bg-brand-cornflower/10 border-brand-cornflower ring-2 ring-brand-cornflower/30'
-                : 'bg-white/50 border-border/50 hover:bg-white hover:border-brand-cornflower/30'
+                : 'bg-card/50 border-border/50 hover:bg-card hover:border-brand-cornflower/30'
             )}
           >
             <div className={cn(
@@ -360,7 +360,7 @@ function RefinedInstructionPreview({
                   <textarea
                     value={editValue}
                     onChange={(e) => onEditChange(e.target.value)}
-                    className="w-full min-h-[100px] p-3 text-sm font-mono bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
+                    className="w-full min-h-[100px] p-3 text-sm font-mono bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
                   />
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="ghost" size="sm" onClick={onEditCancel}>

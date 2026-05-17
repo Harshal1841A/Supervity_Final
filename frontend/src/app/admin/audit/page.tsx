@@ -77,19 +77,19 @@ interface AuditStats {
 
 const categoryColors: Record<string, string> = {
   auth: 'bg-purple-100 text-purple-700',
-  user_management: 'bg-blue-100 text-blue-700',
+  user_management: 'bg-blue-100 text-brand-cornflower',
   admin: 'bg-indigo-100 text-indigo-700',
   settings: 'bg-green-100 text-green-700',
   data: 'bg-cyan-100 text-cyan-700',
   security: 'bg-red-100 text-red-700',
-  system: 'bg-gray-100 text-gray-700',
+  system: 'bg-border text-muted-foreground',
   api: 'bg-orange-100 text-orange-700',
   error: 'bg-red-100 text-red-700',
 }
 
 const methodColors: Record<string, string> = {
   GET: 'bg-green-100 text-green-700',
-  POST: 'bg-blue-100 text-blue-700',
+  POST: 'bg-blue-100 text-brand-cornflower',
   PUT: 'bg-amber-100 text-amber-700',
   PATCH: 'bg-orange-100 text-orange-700',
   DELETE: 'bg-red-100 text-red-700',
@@ -239,7 +239,7 @@ export default function AuditLogsPage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className='rounded-xl border border-gray-100 bg-white p-4 shadow-sm'
+            className='rounded-xl border border-border bg-card p-4 shadow-sm'
           >
             <p className='text-sm text-gray-500'>Total Events</p>
             <p className='text-2xl font-bold text-brand-navy'>{stats.total_events.toLocaleString()}</p>
@@ -248,7 +248,7 @@ export default function AuditLogsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className='rounded-xl border border-gray-100 bg-white p-4 shadow-sm'
+            className='rounded-xl border border-border bg-card p-4 shadow-sm'
           >
             <p className='text-sm text-gray-500'>Today</p>
             <p className='text-2xl font-bold text-green-600'>{stats.events_today.toLocaleString()}</p>
@@ -257,16 +257,16 @@ export default function AuditLogsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className='rounded-xl border border-gray-100 bg-white p-4 shadow-sm'
+            className='rounded-xl border border-border bg-card p-4 shadow-sm'
           >
             <p className='text-sm text-gray-500'>This Week</p>
-            <p className='text-2xl font-bold text-blue-600'>{stats.events_this_week.toLocaleString()}</p>
+            <p className='text-2xl font-bold text-brand-cornflower'>{stats.events_this_week.toLocaleString()}</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className='rounded-xl border border-gray-100 bg-white p-4 shadow-sm'
+            className='rounded-xl border border-border bg-card p-4 shadow-sm'
           >
             <p className='text-sm text-gray-500'>Errors</p>
             <p className='text-2xl font-bold text-red-600'>{stats.recent_errors}</p>
@@ -275,7 +275,7 @@ export default function AuditLogsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className='rounded-xl border border-gray-100 bg-white p-4 shadow-sm'
+            className='rounded-xl border border-border bg-card p-4 shadow-sm'
           >
             <p className='text-sm text-gray-500'>Auto (API)</p>
             <p className='text-2xl font-bold text-orange-600'>{stats.middleware_logs.toLocaleString()}</p>
@@ -284,7 +284,7 @@ export default function AuditLogsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className='rounded-xl border border-gray-100 bg-white p-4 shadow-sm'
+            className='rounded-xl border border-border bg-card p-4 shadow-sm'
           >
             <p className='text-sm text-gray-500'>Avg Response</p>
             <p className='text-2xl font-bold text-purple-600'>
@@ -295,7 +295,7 @@ export default function AuditLogsPage() {
       )}
 
       {/* Filters */}
-      <div className='flex flex-wrap items-center gap-3 rounded-xl border border-gray-100 bg-white p-4'>
+      <div className='flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-4'>
         <div className='flex-1 min-w-[200px]'>
           <Input
             type='text'
@@ -394,7 +394,7 @@ export default function AuditLogsPage() {
       </div>
 
       {/* Logs Table */}
-      <div className='overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm'>
+      <div className='overflow-hidden rounded-xl border border-border bg-card shadow-sm'>
         {isLoading ? (
           <div className='flex h-64 items-center justify-center'>
             <Icons.loader className='h-8 w-8 animate-spin text-brand-cornflower' />
@@ -407,7 +407,7 @@ export default function AuditLogsPage() {
         ) : (
           <div className='overflow-x-auto'>
             <table className='w-full text-left text-sm'>
-              <thead className='border-b border-gray-100 bg-gray-50'>
+              <thead className='border-b border-border bg-accent'>
                 <tr>
                   <th className='px-3 py-3 font-medium text-gray-600'>Time</th>
                   <th className='px-3 py-3 font-medium text-gray-600'>Actor</th>
@@ -427,7 +427,7 @@ export default function AuditLogsPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     onClick={() => setSelectedLog(log)}
-                    className='cursor-pointer hover:bg-gray-50 transition-colors'
+                    className='cursor-pointer hover:bg-accent transition-colors'
                   >
                     <td className='whitespace-nowrap px-3 py-3 text-xs text-gray-500'>
                       {formatTimestamp(log.timestamp)}
@@ -444,7 +444,7 @@ export default function AuditLogsPage() {
                       {log.http_method && (
                         <span
                           className={`inline-flex rounded px-1.5 py-0.5 text-xs font-medium ${
-                            methodColors[log.http_method] || 'bg-gray-100 text-gray-700'
+                            methodColors[log.http_method] || 'bg-border text-muted-foreground'
                           }`}
                         >
                           {log.http_method}
@@ -452,14 +452,14 @@ export default function AuditLogsPage() {
                       )}
                     </td>
                     <td className='px-3 py-3'>
-                      <span className='font-mono text-xs text-gray-700'>
+                      <span className='font-mono text-xs text-muted-foreground'>
                         {log.action}
                       </span>
                     </td>
                     <td className='px-3 py-3'>
                       <span
                         className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                          categoryColors[log.category] || 'bg-gray-100 text-gray-700'
+                          categoryColors[log.category] || 'bg-border text-muted-foreground'
                         }`}
                       >
                         {log.category.replace(/_/g, ' ')}
@@ -514,7 +514,7 @@ export default function AuditLogsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className='flex items-center justify-between border-t border-gray-100 px-4 py-3'>
+          <div className='flex items-center justify-between border-t border-border px-4 py-3'>
             <p className='text-sm text-gray-500'>
               Showing {(page - 1) * 25 + 1} to {Math.min(page * 25, total)} of {total} entries
             </p>
@@ -558,10 +558,10 @@ export default function AuditLogsPage() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className='absolute right-0 top-0 h-full w-full max-w-2xl bg-white shadow-2xl'
+            className='absolute right-0 top-0 h-full w-full max-w-2xl bg-card shadow-2xl'
           >
             {/* Header */}
-            <div className='flex items-center justify-between border-b border-gray-200 px-6 py-4'>
+            <div className='flex items-center justify-between border-b border-border px-6 py-4'>
               <div>
                 <h2 className='text-lg font-semibold text-brand-navy'>Audit Log Details</h2>
                 <p className='text-sm text-gray-500'>ID: {selectedLog.id}</p>
@@ -577,11 +577,11 @@ export default function AuditLogsPage() {
                 {/* Summary */}
                 <div className='flex flex-wrap items-center gap-2'>
                   {selectedLog.http_method && (
-                    <span className={`rounded px-2 py-1 text-sm font-medium ${methodColors[selectedLog.http_method] || 'bg-gray-100'}`}>
+                    <span className={`rounded px-2 py-1 text-sm font-medium ${methodColors[selectedLog.http_method] || 'bg-border'}`}>
                       {selectedLog.http_method}
                     </span>
                   )}
-                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${categoryColors[selectedLog.category] || 'bg-gray-100'}`}>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${categoryColors[selectedLog.category] || 'bg-border'}`}>
                     {selectedLog.category.replace(/_/g, ' ')}
                   </span>
                   {selectedLog.response_status && (
@@ -601,8 +601,8 @@ export default function AuditLogsPage() {
                 </div>
 
                 {/* Actor Information */}
-                <div className='rounded-lg border border-gray-200 p-4'>
-                  <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700'>
+                <div className='rounded-lg border border-border p-4'>
+                  <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
                     <Icons.user className='h-4 w-4' />
                     Actor Information
                   </h3>
@@ -628,15 +628,15 @@ export default function AuditLogsPage() {
                     {selectedLog.actor_user_agent && (
                       <div className='col-span-2'>
                         <dt className='text-gray-500'>User Agent</dt>
-                        <dd className='text-xs text-gray-700 break-all'>{selectedLog.actor_user_agent}</dd>
+                        <dd className='text-xs text-muted-foreground break-all'>{selectedLog.actor_user_agent}</dd>
                       </div>
                     )}
                   </dl>
                 </div>
 
                 {/* Request Details */}
-                <div className='rounded-lg border border-gray-200 p-4'>
-                  <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700'>
+                <div className='rounded-lg border border-border p-4'>
+                  <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
                     <Icons.fileText className='h-4 w-4' />
                     Request Details
                   </h3>
@@ -656,7 +656,7 @@ export default function AuditLogsPage() {
                     {selectedLog.query_params && (
                       <div>
                         <dt className='text-gray-500'>Query Parameters</dt>
-                        <dd className='font-mono text-xs bg-gray-50 p-2 rounded'>{selectedLog.query_params}</dd>
+                        <dd className='font-mono text-xs bg-accent p-2 rounded'>{selectedLog.query_params}</dd>
                       </div>
                     )}
                     <div>
@@ -666,7 +666,7 @@ export default function AuditLogsPage() {
                     {selectedLog.request_body && (
                       <div>
                         <dt className='text-gray-500'>Request Body</dt>
-                        <dd className='font-mono text-xs bg-gray-50 p-2 rounded overflow-x-auto max-h-48 overflow-y-auto'>
+                        <dd className='font-mono text-xs bg-accent p-2 rounded overflow-x-auto max-h-48 overflow-y-auto'>
                           <pre className='whitespace-pre-wrap'>{selectedLog.request_body}</pre>
                         </dd>
                       </div>
@@ -676,8 +676,8 @@ export default function AuditLogsPage() {
 
                 {/* Resource Details (if applicable) */}
                 {(selectedLog.resource_type || selectedLog.resource_id) && (
-                  <div className='rounded-lg border border-gray-200 p-4'>
-                    <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700'>
+                  <div className='rounded-lg border border-border p-4'>
+                    <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
                       <Icons.folder className='h-4 w-4' />
                       Resource Details
                     </h3>
@@ -699,8 +699,8 @@ export default function AuditLogsPage() {
                 )}
 
                 {/* Response Details */}
-                <div className='rounded-lg border border-gray-200 p-4'>
-                  <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700'>
+                <div className='rounded-lg border border-border p-4'>
+                  <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
                     <Icons.check className='h-4 w-4' />
                     Response Details
                   </h3>
@@ -732,19 +732,19 @@ export default function AuditLogsPage() {
 
                 {/* Extra Data (if any) */}
                 {selectedLog.extra_data && Object.keys(selectedLog.extra_data).length > 0 && (
-                  <div className='rounded-lg border border-gray-200 p-4'>
-                    <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700'>
+                  <div className='rounded-lg border border-border p-4'>
+                    <h3 className='mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
                       <Icons.activity className='h-4 w-4' />
                       Additional Data
                     </h3>
-                    <pre className='text-xs bg-gray-50 p-3 rounded overflow-x-auto'>
+                    <pre className='text-xs bg-accent p-3 rounded overflow-x-auto'>
                       {JSON.stringify(selectedLog.extra_data, null, 2)}
                     </pre>
                   </div>
                 )}
 
                 {/* Technical Details */}
-                <div className='rounded-lg border border-gray-100 bg-gray-50 p-4'>
+                <div className='rounded-lg border border-border bg-accent p-4'>
                   <h3 className='mb-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'>
                     Technical Details
                   </h3>

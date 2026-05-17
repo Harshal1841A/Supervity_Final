@@ -68,15 +68,15 @@ module.exports = {
         },
         // Brand Palette for manual usage
         brand: {
-          black: "#04060A",
-          navy: "#141A42",
-          cornflower: "#8AA2DF",
-          muted: "#848EAA",
-          purple: "#535EA4",
-          light: "#E7E7E7",
+          black: "#000000",
+          navy: "#000000", // High-contrast black
+          cornflower: "#0F172A", // Deep Charcoal for text/accents
+          muted: "#64748B", // Crisp metallic gray
+          purple: "#334155",
+          light: "rgba(15, 23, 42, 0.05)",
           // Additional shades for UI
-          "navy-light": "#1E2654",
-          "cornflower-light": "#A8BCEB",
+          "navy-light": "#1E293B",
+          "cornflower-light": "rgba(15, 23, 42, 0.8)",
         }
       },
       // Background gradients

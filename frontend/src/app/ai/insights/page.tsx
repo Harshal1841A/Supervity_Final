@@ -12,83 +12,7 @@ import { InsightCard, type Insight } from '@/components/ai/insights/InsightCard'
 import { PatternCluster, type Pattern } from '@/components/ai/insights/PatternCluster'
 import { ActionCard, type ActionItem } from '@/components/ai/insights/ActionCard'
 
-// ============================================================================
-// Demo Data — Replace with your own API integration
-// ============================================================================
-
-const DEMO_INSIGHTS: Insight[] = [
-  {
-    id: 'demo-insight-001',
-    type: 'pattern',
-    severity: 'info',
-    title: 'Peak Usage Pattern Detected',
-    description: 'Most user activity occurs between 9 AM and 11 AM on weekdays. Tuesday shows 23% higher engagement than other days.',
-    data: { peak_hours: '9:00 - 11:00', peak_day: 'Tuesday', avg_daily_sessions: 156, tuesday_increase: '23%' },
-    suggested_action: 'Schedule system maintenance outside peak hours (before 8 AM or after 6 PM)',
-    action_type: 'schedule_maintenance',
-    confidence: 0.92,
-    created_at: new Date(Date.now() - 2 * 3600000).toISOString(),
-    is_demo: true,
-  },
-  {
-    id: 'demo-insight-002',
-    type: 'anomaly',
-    severity: 'warning',
-    title: 'Unusual API Activity Spike',
-    description: 'API requests spiked 340% at 3:15 AM, significantly outside normal usage patterns. Source traced to 3 IP addresses.',
-    data: { spike_time: '03:15 AM', normal_avg_requests: 45, spike_requests: 198, increase_percent: '340%', source_ips: 3 },
-    suggested_action: 'Review API access logs and verify source IP addresses',
-    action_type: 'investigate',
-    confidence: 0.95,
-    created_at: new Date(Date.now() - 6 * 3600000).toISOString(),
-    is_demo: true,
-  },
-  {
-    id: 'demo-insight-003',
-    type: 'recommendation',
-    severity: 'info',
-    title: 'Policy Optimization Opportunity',
-    description: '23 transactions were manually reviewed that match the Auto-Approve Low Value policy criteria. Creating a supporting policy could save ~3.5 hours per week.',
-    data: { manual_reviews: 23, matching_criteria: 'amount < $50, status = pending', potential_savings_hours: 3.5 },
-    suggested_action: 'Create a complementary policy for amounts under $50',
-    action_type: 'create_policy',
-    confidence: 0.88,
-    created_at: new Date(Date.now() - 12 * 3600000).toISOString(),
-    is_demo: true,
-  },
-  {
-    id: 'demo-insight-004',
-    type: 'anomaly',
-    severity: 'warning',
-    title: 'Duplicate Transaction Detected',
-    description: 'Two transactions with identical amounts, timestamps, and vendor details submitted within 2 seconds. Potential duplicate entry.',
-    data: { transaction_1_id: 'TXN-2024-001234', transaction_2_id: 'TXN-2024-001235', amount: 4750.0, vendor: 'TechSupply Inc', time_difference_seconds: 1.8 },
-    suggested_action: 'Review and potentially void duplicate transaction',
-    action_type: 'review_duplicate',
-    confidence: 0.97,
-    created_at: new Date(Date.now() - 30 * 60000).toISOString(),
-    is_demo: true,
-  },
-]
-
-const DEMO_PATTERNS: Pattern[] = [
-  { name: 'Peak Business Hours', frequency: 'daily', confidence: 0.92, sample_size: 2500, description: 'Activity peaks between 9-11 AM and 2-4 PM on weekdays', is_demo: true },
-  { name: 'Weekend Activity Drop', frequency: 'weekly', confidence: 0.96, sample_size: 8400, description: 'Weekend activity drops to 12% of weekday average', is_demo: true },
-  { name: 'Month-End Surge', frequency: 'monthly', confidence: 0.89, sample_size: 15000, description: 'Last 3 days of month show 45% higher transaction volume', is_demo: true },
-  { name: 'Vendor Preference Clustering', frequency: 'ongoing', confidence: 0.78, sample_size: 1200, description: 'Top 5 vendors account for 67% of all transactions', is_demo: true },
-]
-
-const DEMO_ACTIONS: ActionItem[] = [
-  { title: 'Create policy for sub-$50 auto-approval', priority: 'high', estimated_impact: 'Save 3.5 hours/week', action_type: 'create_policy', action_config: { template: 'auto_approve', threshold: 50 }, is_demo: true },
-  { title: 'Investigate 3 AM API spike', priority: 'high', estimated_impact: 'Security improvement', action_type: 'investigate', action_config: { log_type: 'api_access', time_range: '02:00-04:00' }, is_demo: true },
-  { title: 'Review duplicate transaction pair', priority: 'critical', estimated_impact: 'Prevent $4,750 overpayment', action_type: 'review_transaction', action_config: { transaction_ids: ['TXN-2024-001234', 'TXN-2024-001235'] }, is_demo: true },
-]
-
-interface _InsightsResponse {
-  insights: Insight[]
-  patterns: Pattern[]
-  actions: ActionItem[]
-}
+// Demo data removed. Insights are fetched from the API based on real agent logs.
 
 // Tab configuration
 interface Tab {
@@ -127,13 +51,19 @@ export default function AIInsightsPage() {
 
   const fetchInsights = useCallback(async () => {
     setIsLoading(true)
-    // Simulate loading — replace with real API call
-    setTimeout(() => {
-      setInsights(DEMO_INSIGHTS)
-      setPatterns(DEMO_PATTERNS)
-      setActions(DEMO_ACTIONS)
-      setIsLoading(false)
-    }, 300)
+    try {
+      const res = await fetch("/api/dashboard/insights");
+      if (res.ok) {
+        const data = await res.json();
+        setInsights(data.insights || []);
+        setPatterns(data.patterns || []);
+        setActions(data.actions || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   }, [])
 
   useEffect(() => {
@@ -142,13 +72,19 @@ export default function AIInsightsPage() {
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true)
-    // Simulate analysis — replace with real API call
-    setTimeout(() => {
-      setInsights(DEMO_INSIGHTS)
-      setPatterns(DEMO_PATTERNS)
-      setActions(DEMO_ACTIONS)
-      setIsAnalyzing(false)
-    }, 1500)
+    try {
+      const res = await fetch("/api/dashboard/insights", { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        setInsights(data.insights || []);
+        setPatterns(data.patterns || []);
+        setActions(data.actions || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAnalyzing(false);
+    }
   }
 
   const handleInsightAction = useCallback(async (insight: Insight) => {
@@ -227,33 +163,30 @@ export default function AIInsightsPage() {
         </Button>
       </motion.div>
 
-      {/* Demo Data Notice */}
-      <motion.div 
-        variants={itemVariants}
-        className="rounded-lg border border-amber-200 bg-amber-50 p-4"
-      >
-        <div className="flex items-start gap-3">
-          <Icons.info className="h-5 w-5 text-amber-600 mt-0.5" />
-          <div className="flex-1">
-            <p className="font-medium text-amber-900">Demo Insights</p>
-            <p className="text-sm text-amber-700 mt-1">
-              Items marked with [DEMO] are sample data for demonstration purposes. 
-              Connect your AI backend to enable real-time analysis of your data.
-            </p>
-          </div>
-        </div>
-      </motion.div>
+      {/* Empty State Notice */}
+      {!isLoading && insights.length === 0 && patterns.length === 0 && (
+        <motion.div 
+          variants={itemVariants}
+          className="rounded-lg border border-brand-green/30 bg-brand-green/5 p-8 text-center"
+        >
+          <Icons.sparkles className="mx-auto h-8 w-8 text-brand-green/50 mb-3" />
+          <h3 className="text-lg font-medium text-brand-navy">No Insights Available Yet</h3>
+          <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
+            Insights are automatically generated after GrowthPilot OS agents execute tasks. Trigger a run in the Live Operations Dashboard to populate this view.
+          </p>
+        </motion.div>
+      )}
 
       {/* Stats Cards */}
       <motion.div variants={itemVariants} className="grid gap-4 sm:grid-cols-3">
         <Card className="relative overflow-hidden">
           <CardWatermark opacity={2} scale={0.8} />
           <CardContent className="relative z-10 flex items-center gap-4 py-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100">
-              <Icons.alertCircle className="h-6 w-6 text-red-600" strokeWidth={1.5} />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/20">
+              <Icons.alertCircle className="h-6 w-6 text-red-400" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-brand-navy">{criticalCount}</p>
+              <p className="text-2xl font-bold text-foreground">{criticalCount}</p>
               <p className="text-sm text-muted-foreground">Critical Issues</p>
             </div>
           </CardContent>
@@ -262,11 +195,11 @@ export default function AIInsightsPage() {
         <Card className="relative overflow-hidden">
           <CardWatermark opacity={2} scale={0.8} />
           <CardContent className="relative z-10 flex items-center gap-4 py-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
-              <Icons.alertTriangle className="h-6 w-6 text-amber-600" strokeWidth={1.5} />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/20">
+              <Icons.alertTriangle className="h-6 w-6 text-amber-400" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-brand-navy">{warningCount}</p>
+              <p className="text-2xl font-bold text-foreground">{warningCount}</p>
               <p className="text-sm text-muted-foreground">Warnings</p>
             </div>
           </CardContent>
@@ -275,11 +208,11 @@ export default function AIInsightsPage() {
         <Card className="relative overflow-hidden">
           <CardWatermark opacity={2} scale={0.8} />
           <CardContent className="relative z-10 flex items-center gap-4 py-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-              <Icons.lightbulb className="h-6 w-6 text-blue-600" strokeWidth={1.5} />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-cornflower/20">
+              <Icons.lightbulb className="h-6 w-6 text-brand-cornflower" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-brand-navy">{infoCount + patterns.length}</p>
+              <p className="text-2xl font-bold text-foreground">{infoCount + patterns.length}</p>
               <p className="text-sm text-muted-foreground">Recommendations</p>
             </div>
           </CardContent>
@@ -290,7 +223,7 @@ export default function AIInsightsPage() {
       <motion.div variants={itemVariants}>
         <div className={cn(
           'inline-flex items-center gap-1 rounded-xl p-1',
-          'bg-white/50 border border-border/50',
+          'bg-card/50 border border-border/50',
           'backdrop-blur-sm'
         )}>
           {tabs.map((tab) => {
@@ -307,7 +240,7 @@ export default function AIInsightsPage() {
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-cornflower/50',
                   isActive
                     ? 'text-white'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-white/50'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
                 )}
               >
                 {isActive && (

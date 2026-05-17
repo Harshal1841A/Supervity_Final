@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import { useSession } from 'next-auth/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { apiClient } from '@/lib/api-client'
+// apiClient is not needed — AI chat uses local Next.js route at /api/ai/chat
 import { useAI } from '@/context/AIContext'
 import { Icons } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
@@ -113,21 +113,27 @@ export function AIManager() {
     setIsTyping(true)
 
     try {
-      // Call backend API using apiClient
+      // Call local Next.js AI chat route (bypasses Python backend)
       interface ToolCallResponse {
         id: string
         name: string
         args: Record<string, unknown>
         result?: unknown
       }
-      const data = await apiClient.post<{ response: string; tool_calls?: ToolCallResponse[] }>('/api/ai/chat', {
-        message: content,
-        history: chatHistory.filter(m => !m.isLoading).map(m => ({
-          role: m.role,
-          content: m.content,
-        })),
-        context: { page: currentPageContext },
+      const chatRes = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: content,
+          history: chatHistory.filter(m => !m.isLoading).map(m => ({
+            role: m.role,
+            content: m.content,
+          })),
+          context: { page: currentPageContext },
+        }),
       })
+      if (!chatRes.ok) throw new Error(`HTTP ${chatRes.status}`)
+      const data: { response: string; tool_calls?: ToolCallResponse[] } = await chatRes.json()
 
       // Remove loading message and add real response
       addMessage({
@@ -209,9 +215,9 @@ export function AIManager() {
                 'relative w-full max-w-2xl',
                 'h-[80vh] max-h-[700px] min-h-[450px]',
                 // Solid white background for better readability
-                'bg-white',
+                'bg-card',
                 // Border and shadow
-                'border border-gray-200',
+                'border border-border',
                 'rounded-2xl',
                 'shadow-2xl',
                 // Layout

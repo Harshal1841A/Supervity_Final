@@ -1,0 +1,56 @@
+[
+  {
+    "id": "manual-atlas-1778975795327",
+    "agent": "Atlas",
+    "priority": "HIGH",
+    "message": "event: ping",
+    "time": "just now",
+    "brand_name": "boAt",
+    "createdAt": "2026-05-16T23:56:36.077Z"
+  },
+  {
+    "id": "manual-atlas-1778976699568",
+    "agent": "Atlas",
+    "priority": "HIGH",
+    "message": "ping",
+    "time": "just now",
+    "brand_name": "boAt",
+    "createdAt": "2026-05-17T00:11:41.174Z"
+  },
+  {
+    "id": "manual-atlas-1778976709253",
+    "agent": "Atlas",
+    "priority": "HIGH",
+    "message": "ping",
+    "time": "just now",
+    "brand_name": "boAt",
+    "createdAt": "2026-05-17T00:11:49.988Z"
+  },
+  {
+    "id": "manual-atlas-1778976714072",
+    "agent": "Atlas",
+    "priority": "HIGH",
+    "message": "event: ping",
+    "time": "just now",
+    "brand_name": "boAt",
+    "createdAt": "2026-05-17T00:11:54.778Z"
+  },
+  {
+    "id": "manual-atlas-1778976715743",
+    "agent": "Atlas",
+    "priority": "HIGH",
+    "message": "event: ping",
+    "time": "just now",
+    "brand_name": "boAt",
+    "createdAt": "2026-05-17T00:11:56.908Z"
+  },
+  {
+    "id": "manual-atlas-1778976717421",
+    "agent": "Atlas",
+    "priority": "HIGH",
+    "message": "ping",
+    "time": "just now",
+    "brand_name": "boAt",
+    "createdAt": "2026-05-17T00:11:59.805Z"
+  }
+]

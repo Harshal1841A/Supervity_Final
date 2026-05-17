@@ -39,7 +39,7 @@ function CustomTooltip({
   if (!active || !payload || !payload.length) return null
 
   return (
-    <div className='rounded-xl border border-white/60 bg-white/95 p-3 shadow-float backdrop-blur-sm'>
+    <div className='rounded-xl border border-white/60 bg-card/95 p-3 shadow-float backdrop-blur-sm'>
       <p className='mb-2 text-xs font-medium text-brand-navy'>{label}</p>
       <div className='space-y-1'>
         {payload.map((entry, index) => (

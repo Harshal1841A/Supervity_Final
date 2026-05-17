@@ -274,7 +274,7 @@ export default function RolesPage() {
                         : role.name === 'pending'
                         ? 'bg-amber-100 text-amber-600'
                         : isSystem
-                        ? 'bg-gray-100 text-gray-600'
+                        ? 'bg-border text-gray-600'
                         : 'bg-brand-cornflower/10 text-brand-cornflower'
                     }`}>
                       {role.name === 'admin' ? (

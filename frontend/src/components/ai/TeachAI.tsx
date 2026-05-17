@@ -134,7 +134,7 @@ export function TeachAI({
   return (
     <>
       <div className={cn(
-        'rounded-xl border border-border/50 bg-white/50 p-4',
+        'rounded-xl border border-border/50 bg-card/50 p-4',
         'backdrop-blur-sm'
       )}>
         <div className="flex items-start gap-4">

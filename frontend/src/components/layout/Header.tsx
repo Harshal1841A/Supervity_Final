@@ -53,10 +53,10 @@ function SearchInput({
       onClick={onOpenCommandPalette}
       className={cn(
         'group flex h-9 w-64 items-center gap-2 px-3',
-        'rounded-full border border-border/50 bg-white/50',
+        'rounded-full border border-border/50 bg-card/50',
         'text-sm text-muted-foreground',
         'transition-all duration-300 ease-out',
-        'hover:border-brand-cornflower/40 hover:bg-white/90 hover:shadow-sm',
+        'hover:border-brand-cornflower/40 hover:bg-card/90 hover:shadow-sm',
         'hover:w-72',
         'focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50'
       )}
@@ -101,20 +101,20 @@ function AIManagerTrigger() {
               'shadow-md shadow-brand-navy/20',
               'hover:shadow-lg hover:shadow-brand-purple/30',
               'hover:scale-[1.02]',
-              isManagerOpen && 'ring-2 ring-brand-cornflower ring-offset-2',
-              'focus:outline-none focus:ring-2 focus:ring-brand-cornflower focus:ring-offset-2'
+              isManagerOpen && 'ring-2 ring-brand-navy ring-offset-2',
+              'focus:outline-none focus:ring-2 focus:ring-brand-navy focus:ring-offset-2'
             )}
             aria-label='Open AI Manager'
           >
             <Icons.sparkles
-              className='h-4 w-4 text-white'
+              className='h-4 w-4 text-white/90'
               strokeWidth={1.5}
             />
             <span className='hidden sm:inline'>AI Manager</span>
             <kbd className={cn(
               'hidden sm:inline-flex items-center gap-0.5',
               'px-1.5 py-0.5 rounded',
-              'bg-white/20 text-white/90',
+              'bg-white/10 text-white/90',
               'text-[10px] font-medium'
             )}>
               <Icons.command className='h-2.5 w-2.5' />J
@@ -217,8 +217,8 @@ export function Header({ onOpenMobileMenu }: HeaderProps) {
         // Adjust left position based on sidebar (hidden on mobile)
         'left-4 md:left-[calc(16rem+1rem)]',
         // Glass pill styling
-        'rounded-2xl bg-white/70 backdrop-blur-xl',
-        'border border-white/60 ring-1 ring-black/[0.03]',
+        'rounded-2xl bg-card/70 backdrop-blur-xl',
+        'border border-border/60 ring-1 ring-black/[0.03]',
         'shadow-float',
         // Layout
         'flex items-center justify-between',

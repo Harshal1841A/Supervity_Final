@@ -110,17 +110,17 @@ export default function EventsPage() {
     if (type.includes('ERROR')) return 'text-red-600'
     if (type === 'LOGIN') return 'text-emerald-600'
     if (type === 'LOGOUT') return 'text-amber-600'
-    if (type === 'REGISTER') return 'text-blue-600'
+    if (type === 'REGISTER') return 'text-brand-cornflower'
     return 'text-gray-600'
   }
 
   const getEventBgColor = (type: string | null) => {
-    if (!type) return 'bg-gray-100'
+    if (!type) return 'bg-border'
     if (type.includes('ERROR')) return 'bg-red-100'
     if (type === 'LOGIN') return 'bg-emerald-100'
     if (type === 'LOGOUT') return 'bg-amber-100'
     if (type === 'REGISTER') return 'bg-blue-100'
-    return 'bg-gray-100'
+    return 'bg-border'
   }
 
   if (status === 'loading' || (isLoading && events.length === 0)) {
@@ -294,7 +294,7 @@ export default function EventsPage() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -10 }}
-                      className='flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100'
+                      className='flex items-start gap-4 p-3 rounded-lg hover:bg-accent border border-transparent hover:border-border'
                     >
                       <div className={`p-2 rounded-full ${getEventBgColor(event.type)}`}>
                         <Icon className={`h-4 w-4 ${getEventColor(event.type)}`} />

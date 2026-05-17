@@ -1,0 +1,14 @@
+Seeding brands...
+TypeError: Cannot read properties of undefined (reading 'replace')
+    at createBetterSQLite3Client (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\adapter-better-sqlite3\dist\index.js:658:22)
+    at PrismaBetterSqlite3AdapterFactory.connect (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\adapter-better-sqlite3\dist\index.js:647:59)
+    at e.connect (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\core\engines\client\LocalExecutor.ts:49:58)
+    at jt.#connectExecutor (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\core\engines\client\ClientEngine.ts:239:34)
+    at callback (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\core\engines\client\ClientEngine.ts:188:35)
+    at Object.runInChildSpan (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\core\tracing\TracingHelper.ts:28:12)
+    at fi.runInChildSpan (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\core\tracing\TracingHelper.ts:53:36)
+    at jt.#ensureStarted (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\core\engines\client\ClientEngine.ts:183:47)
+    at jt.request (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\core\engines\client\ClientEngine.ts:470:52)
+    at Object.singleLoader (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\RequestHandler.ts:112:52) {
+  clientVersion: '7.8.0'
+}

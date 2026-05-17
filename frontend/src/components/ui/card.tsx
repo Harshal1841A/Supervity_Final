@@ -10,18 +10,18 @@ const Card = React.forwardRef<
     className={cn(
       // Group for child animations
       'group',
-      // Base: Glaze effect with gradient background
-      'rounded-2xl bg-gradient-to-b from-white to-[#F8FAFF]',
-      // Border: Double-layer effect with white border and subtle ring
-      'border border-white/60 ring-1 ring-black/[0.03]',
-      // Shadow: Glass effect with inner highlight
-      'shadow-glass',
+      // Base: Dark glassmorphism using the theme card token
+      'rounded-2xl bg-card',
+      // Border: subtle border using theme token
+      'border border-border/60',
+      // Shadow: soft depth shadow
+      'shadow-md',
       // Text
       'text-card-foreground',
       // Transitions for smooth hover effects
       'transition-all duration-300 ease-out',
       // Hover: Subtle lift + accent glow effect
-      'hover:-translate-y-0.5 hover:shadow-glass-hover hover:ring-brand-cornflower/20',
+      'hover:-translate-y-0.5 hover:shadow-lg hover:border-border',
       className
     )}
     {...props}

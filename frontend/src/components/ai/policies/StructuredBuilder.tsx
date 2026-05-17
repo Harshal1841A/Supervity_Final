@@ -122,7 +122,7 @@ function ConditionRow({
       )}
       
       {/* Index */}
-      <span className="w-6 h-6 rounded bg-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0">
+      <span className="w-6 h-6 rounded bg-blue-200 text-brand-cornflower flex items-center justify-center text-xs font-bold flex-shrink-0">
         {index + 1}
       </span>
       
@@ -132,7 +132,7 @@ function ConditionRow({
         onChange={(e) => onUpdate(condition.id, 'field', e.target.value)}
         disabled={readOnly}
         className={cn(
-          'px-2 py-1.5 rounded border border-blue-200 bg-white text-sm font-medium text-blue-900',
+          'px-2 py-1.5 rounded border border-brand-cornflower/30 bg-card text-sm font-medium text-foreground',
           'focus:outline-none focus:ring-2 focus:ring-blue-300',
           'min-w-[120px]'
         )}
@@ -149,7 +149,7 @@ function ConditionRow({
         onChange={(e) => onUpdate(condition.id, 'operator', e.target.value)}
         disabled={readOnly}
         className={cn(
-          'px-3 py-1.5 rounded border border-blue-200 bg-white text-lg font-mono text-blue-600',
+          'px-3 py-1.5 rounded border border-brand-cornflower/30 bg-card text-lg font-mono text-brand-cornflower',
           'focus:outline-none focus:ring-2 focus:ring-blue-300',
           'w-16 text-center'
         )}
@@ -167,7 +167,7 @@ function ConditionRow({
         disabled={readOnly}
         placeholder="value"
         className={cn(
-          'flex-1 px-3 py-1.5 rounded border border-blue-200 bg-white text-sm font-mono text-blue-800',
+          'flex-1 px-3 py-1.5 rounded border border-brand-cornflower/30 bg-card text-sm font-mono text-foreground',
           'focus:outline-none focus:ring-2 focus:ring-blue-300',
           'min-w-[100px]'
         )}
@@ -229,7 +229,7 @@ function ActionChip({
           disabled={readOnly}
           placeholder="value..."
           className={cn(
-            'px-2 py-0.5 rounded border border-emerald-200 bg-white text-sm text-emerald-800',
+            'px-2 py-0.5 rounded border border-emerald-200 bg-card text-sm text-emerald-800',
             'focus:outline-none focus:ring-2 focus:ring-emerald-300',
             'w-32'
           )}
@@ -365,8 +365,8 @@ export function StructuredBuilder({ initialDSL, onChange, readOnly = false }: St
       <div>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Icons.filter className="h-4 w-4 text-blue-600" />
-            <span className="text-sm font-semibold text-blue-700">
+            <Icons.filter className="h-4 w-4 text-brand-cornflower" />
+            <span className="text-sm font-semibold text-brand-cornflower">
               When these conditions are met
             </span>
           </div>
@@ -379,8 +379,8 @@ export function StructuredBuilder({ initialDSL, onChange, readOnly = false }: St
                 className={cn(
                   'px-3 py-1 text-xs font-semibold rounded-md transition-colors',
                   matchMode === 'all'
-                    ? 'bg-white text-blue-700 shadow-sm'
-                    : 'text-blue-500 hover:text-blue-700'
+                    ? 'bg-card text-brand-cornflower shadow-sm'
+                    : 'text-blue-500 hover:text-brand-cornflower'
                 )}
               >
                 Match ALL
@@ -390,8 +390,8 @@ export function StructuredBuilder({ initialDSL, onChange, readOnly = false }: St
                 className={cn(
                   'px-3 py-1 text-xs font-semibold rounded-md transition-colors',
                   matchMode === 'any'
-                    ? 'bg-white text-blue-700 shadow-sm'
-                    : 'text-blue-500 hover:text-blue-700'
+                    ? 'bg-card text-brand-cornflower shadow-sm'
+                    : 'text-blue-500 hover:text-brand-cornflower'
                 )}
               >
                 Match ANY
@@ -425,7 +425,7 @@ export function StructuredBuilder({ initialDSL, onChange, readOnly = false }: St
             variant="outline"
             size="sm"
             onClick={handleAddCondition}
-            className="mt-3 border-dashed border-blue-300 text-blue-600 hover:bg-blue-50"
+            className="mt-3 border-dashed border-blue-300 text-brand-cornflower hover:bg-blue-50"
           >
             <Icons.plus className="mr-1.5 h-4 w-4" />
             Add Condition
@@ -474,7 +474,7 @@ export function StructuredBuilder({ initialDSL, onChange, readOnly = false }: St
                     exit={{ opacity: 0, y: -10 }}
                     className={cn(
                       'absolute top-full left-0 mt-2 z-50',
-                      'bg-white rounded-lg shadow-lg border border-gray-200',
+                      'bg-card rounded-lg shadow-lg border border-border',
                       'p-2 min-w-[200px] max-h-[300px] overflow-y-auto'
                     )}
                   >
@@ -484,7 +484,7 @@ export function StructuredBuilder({ initialDSL, onChange, readOnly = false }: St
                         onClick={() => handleAddAction(action.value)}
                         className={cn(
                           'w-full flex items-center gap-2 px-3 py-2 rounded-md text-left text-sm',
-                          'hover:bg-emerald-50 text-gray-700 hover:text-emerald-700',
+                          'hover:bg-emerald-50 text-muted-foreground hover:text-emerald-700',
                           'transition-colors'
                         )}
                       >

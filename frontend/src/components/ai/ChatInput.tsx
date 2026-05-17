@@ -57,7 +57,7 @@ export function ChatInput({ onSend, disabled, placeholder = 'Ask anything...' }:
     )}>
       <div className={cn(
         'flex-1 flex items-end',
-        'rounded-xl border border-border/50 bg-white',
+        'rounded-xl border border-border/50 bg-card',
         'shadow-sm',
         'transition-all duration-200',
         'focus-within:border-brand-cornflower/50 focus-within:ring-2 focus-within:ring-brand-cornflower/20',

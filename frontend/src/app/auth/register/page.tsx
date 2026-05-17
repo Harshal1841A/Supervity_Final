@@ -152,7 +152,7 @@ export default function RegisterPage() {
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
         className='w-full max-w-md'
       >
-        <Card className='relative overflow-hidden bg-white shadow-float-lg'>
+        <Card className='relative overflow-hidden bg-card shadow-float-lg'>
           <CardWatermark opacity={4} scale={1} />
           <CardHeader className='relative z-10 space-y-4 pb-8 text-center'>
             <motion.div
@@ -223,7 +223,7 @@ export default function RegisterPage() {
       transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       className='w-full max-w-md'
     >
-      <Card className='relative overflow-hidden bg-white shadow-float-lg transition-shadow duration-500 hover:shadow-accent'>
+      <Card className='relative overflow-hidden bg-card shadow-float-lg transition-shadow duration-500 hover:shadow-accent'>
           <CardWatermark opacity={4} scale={1} />
           <CardHeader className='relative z-10 space-y-4 pb-6 text-center'>
             <motion.div
@@ -354,7 +354,7 @@ export default function RegisterPage() {
               </div>
 
               {/* Info box */}
-              <div className='rounded-lg border border-blue-100 bg-blue-50 p-3 text-xs text-blue-700'>
+              <div className='rounded-lg border border-blue-100 bg-blue-50 p-3 text-xs text-brand-cornflower'>
                 <p>
                   <strong>Note:</strong> Users from approved domains get instant access. 
                   Others will require admin approval.

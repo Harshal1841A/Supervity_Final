@@ -190,7 +190,7 @@ export function ChatMessage({ message, userName, userImage }: ChatMessageProps) 
             'transition-all duration-200',
             isUser
               ? 'bg-brand-navy text-white rounded-br-md'
-              : 'bg-white/90 text-foreground border border-border/50 rounded-bl-md shadow-soft',
+              : 'bg-card/90 text-foreground border border-border/50 rounded-bl-md shadow-soft',
             isLoading && 'animate-pulse'
           )}
         >

@@ -211,7 +211,7 @@ export function PolicyDetailModal({
         >
           <motion.div
             key="modal-content"
-            className="relative w-full max-w-2xl max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+            className="relative w-full max-w-2xl max-h-[85vh] bg-card rounded-2xl shadow-2xl overflow-hidden flex flex-col"
             variants={modalVariants}
             onClick={(e) => e.stopPropagation()}
           >
@@ -232,7 +232,7 @@ export function PolicyDetailModal({
                     className={cn(
                       'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold',
                       isLogical
-                        ? 'bg-blue-100 text-blue-700'
+                        ? 'bg-blue-100 text-brand-cornflower'
                         : 'bg-purple-100 text-purple-700'
                     )}
                     initial={{ scale: 0.8, opacity: 0 }}
@@ -258,7 +258,7 @@ export function PolicyDetailModal({
                       'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold',
                       policy.is_active
                         ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-gray-100 text-gray-600'
+                        : 'bg-border text-gray-600'
                     )}
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -281,7 +281,7 @@ export function PolicyDetailModal({
                   {policy.tags.slice(0, 3).map((tag, idx) => (
                     <motion.span
                       key={tag}
-                      className="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600"
+                      className="px-2 py-0.5 rounded-full text-xs bg-border text-gray-600"
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.25 + idx * 0.05 }}
@@ -317,15 +317,15 @@ export function PolicyDetailModal({
               {/* Original User Input */}
               <motion.div variants={itemVariants}>
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="p-1.5 rounded-lg bg-gray-100">
+                  <div className="p-1.5 rounded-lg bg-border">
                     <Icons.user className="h-4 w-4 text-gray-600" />
                   </div>
-                  <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                  <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                     Original Input
                   </span>
                 </div>
-                <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-colors">
-                  <p className="text-sm text-gray-700 leading-relaxed italic">
+                <div className="bg-accent rounded-xl border border-border p-4 hover:border-gray-300 transition-colors">
+                  <p className="text-sm text-muted-foreground leading-relaxed italic">
                     &ldquo;{policy.natural_language}&rdquo;
                   </p>
                 </div>
@@ -340,12 +340,12 @@ export function PolicyDetailModal({
                   )}>
                     <Icons.sparkles className={cn(
                       'h-4 w-4',
-                      isLogical ? 'text-blue-600' : 'text-purple-600'
+                      isLogical ? 'text-brand-cornflower' : 'text-purple-600'
                     )} />
                   </div>
                   <span className={cn(
                     'text-sm font-semibold uppercase tracking-wide',
-                    isLogical ? 'text-blue-700' : 'text-purple-700'
+                    isLogical ? 'text-brand-cornflower' : 'text-purple-700'
                   )}>
                     {isLogical ? 'Structured Rules' : 'AI Instruction'}
                   </span>
@@ -355,7 +355,7 @@ export function PolicyDetailModal({
                   <div className="bg-blue-50 rounded-xl border border-blue-100 p-4 space-y-4">
                     {/* Conditions */}
                     <div>
-                      <p className="text-xs font-semibold text-blue-700 mb-3 uppercase tracking-wide">
+                      <p className="text-xs font-semibold text-brand-cornflower mb-3 uppercase tracking-wide">
                         Conditions ({policy.dsl.match_mode === 'any' ? 'Match ANY' : 'Match ALL'})
                       </p>
                       <div className="space-y-2">
@@ -364,18 +364,18 @@ export function PolicyDetailModal({
                           return (
                             <motion.div
                               key={idx}
-                              className="flex items-center gap-3 p-2.5 bg-white rounded-lg border border-blue-100 hover:border-blue-200 hover:shadow-sm transition-all"
+                              className="flex items-center gap-3 p-2.5 bg-card rounded-lg border border-blue-100 hover:border-brand-cornflower/30 hover:shadow-sm transition-all"
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: idx * 0.05 }}
                             >
-                              <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                              <span className="w-6 h-6 rounded-full bg-blue-100 text-brand-cornflower flex items-center justify-center text-xs font-bold flex-shrink-0">
                                 {idx + 1}
                               </span>
-                              <code className="text-sm font-mono text-blue-800 flex-1">
+                              <code className="text-sm font-mono text-foreground flex-1">
                                 <span className="font-medium">{cond.field.replace(/_/g, ' ')}</span>
                                 <span className="mx-2 text-blue-500">{opInfo.symbol}</span>
-                                <span className="text-blue-700">{formatValue(cond.value)}</span>
+                                <span className="text-brand-cornflower">{formatValue(cond.value)}</span>
                               </code>
                             </motion.div>
                           )
@@ -424,11 +424,11 @@ export function PolicyDetailModal({
                     <div className="p-1.5 rounded-lg bg-amber-100">
                       <Icons.info className="h-4 w-4 text-amber-600" />
                     </div>
-                    <span className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                    <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                       Details
                     </span>
                   </div>
-                  <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-2">
+                  <div className="bg-accent rounded-xl border border-border p-4 space-y-2">
                     {policy.description && (
                       <p className="text-sm text-gray-600">{policy.description}</p>
                     )}
@@ -450,21 +450,21 @@ export function PolicyDetailModal({
                 variants={itemVariants}
               >
                 <motion.div 
-                  className="text-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                  className="text-center p-3 bg-accent rounded-xl hover:bg-border transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   <p className="text-2xl font-bold text-brand-navy">{policy.execution_count}</p>
                   <p className="text-xs text-muted-foreground">Executions</p>
                 </motion.div>
                 <motion.div 
-                  className="text-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                  className="text-center p-3 bg-accent rounded-xl hover:bg-border transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   <p className="text-lg font-bold text-brand-navy">{policy.priority}</p>
                   <p className="text-xs text-muted-foreground">Priority</p>
                 </motion.div>
                 <motion.div 
-                  className="text-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                  className="text-center p-3 bg-accent rounded-xl hover:bg-border transition-colors"
                   whileHover={{ scale: 1.02 }}
                 >
                   <p className="text-sm font-medium text-brand-navy">{formatDate(policy.created_at)}</p>
@@ -486,7 +486,7 @@ export function PolicyDetailModal({
 
             {/* Footer Actions */}
             <motion.div 
-              className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50"
+              className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-accent"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}

@@ -1,0 +1,18 @@
+C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\utils\validatePrismaClientOptions.ts:260
+      throw new PrismaClientConstructorValidationError(
+            ^
+
+PrismaClientConstructorValidationError: Unknown property datasourceUrl provided to PrismaClient constructor.
+Read more at https://pris.ly/d/client-constructor
+    at validatePrismaClientOptions (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\utils\validatePrismaClientOptions.ts:260:13)
+    at new t (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:358:7)
+    at <anonymous> (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\prisma\seed.ts:2:16)
+    at Object.<anonymous> (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\prisma\seed.ts:33:4)
+    at Module._compile (node:internal/modules/cjs/loader:1760:14)
+    at Object.transformer (C:\Users\Admin\OneDrive\Desktop\Growth autopilot\AutoPilot-Template\frontend\node_modules\tsx\dist\register-DJgoUG_Q.cjs:9:1709)
+    at Module.load (node:internal/modules/cjs/loader:1480:32)
+    at Module._load (node:internal/modules/cjs/loader:1299:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+
+Node.js v25.2.0

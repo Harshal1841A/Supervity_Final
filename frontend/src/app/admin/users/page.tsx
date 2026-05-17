@@ -108,7 +108,7 @@ function ActionDropdown({
 
   // Password reset (available for all active users except self)
   if (user.enabled && !isSelf) {
-    actions.push({ key: 'reset-password', label: 'Reset Password', icon: Icons.key, color: 'text-blue-600' })
+    actions.push({ key: 'reset-password', label: 'Reset Password', icon: Icons.key, color: 'text-brand-cornflower' })
   }
 
   // Force logout (terminate all sessions)
@@ -271,7 +271,7 @@ function CreateUserModal({
             </div>
           </DialogHeader>
 
-          <div className='rounded-lg border border-gray-200 bg-gray-50 p-4'>
+          <div className='rounded-lg border border-border bg-accent p-4'>
             <div className='mb-3'>
               <Label className='text-xs font-medium uppercase text-gray-500'>Email</Label>
               <p className='font-mono text-sm text-gray-900'>{createdUser.email}</p>
@@ -379,7 +379,7 @@ function CreateUserModal({
               checked={formData.temporaryPassword}
               onCheckedChange={(checked) => setFormData({ ...formData, temporaryPassword: checked === true })}
             />
-            <Label htmlFor='temporaryPassword' className='text-sm text-gray-700 cursor-pointer'>
+            <Label htmlFor='temporaryPassword' className='text-sm text-muted-foreground cursor-pointer'>
               Require password change on first login
             </Label>
           </div>
@@ -924,14 +924,14 @@ export default function AdminUsersPage() {
         )
       case 'needs-role':
         return (
-          <span className='inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600'>
+          <span className='inline-flex items-center rounded-full bg-border px-2.5 py-0.5 text-xs font-medium text-gray-600'>
             <Icons.alertCircle className='mr-1 h-3 w-3' />
             Needs Role
           </span>
         )
       default:
         return (
-          <span className='inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600'>
+          <span className='inline-flex items-center rounded-full bg-border px-2.5 py-0.5 text-xs font-medium text-gray-600'>
             Unknown
           </span>
         )
@@ -1150,7 +1150,7 @@ export default function AdminUsersPage() {
           ) : (
             <div className='overflow-x-auto'>
               <table className='w-full'>
-                <thead className='border-b bg-gray-50/50'>
+                <thead className='border-b bg-accent/50'>
                   <tr>
                     <th className='px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500'>
                       User
@@ -1177,7 +1177,7 @@ export default function AdminUsersPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className='hover:bg-gray-50/50 transition-colors'
+                        className='hover:bg-accent/50 transition-colors'
                       >
                         <td className='whitespace-nowrap px-6 py-4'>
                           <div className='flex items-center gap-3'>
@@ -1321,7 +1321,7 @@ export default function AdminUsersPage() {
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
             <DialogTitle className='flex items-center gap-2'>
-              <Icons.key className='h-5 w-5 text-blue-600' />
+              <Icons.key className='h-5 w-5 text-brand-cornflower' />
               Reset Password
             </DialogTitle>
             <DialogDescription>
@@ -1496,7 +1496,7 @@ export default function AdminUsersPage() {
             </div>
 
             {/* Available Roles Info */}
-            <div className='rounded-md bg-gray-50 p-3 text-xs text-gray-600'>
+            <div className='rounded-md bg-accent p-3 text-xs text-gray-600'>
               <p className='font-medium mb-1'>System Roles:</p>
               <ul className='list-disc list-inside space-y-0.5'>
                 <li><strong>admin</strong> - Full administrative access</li>

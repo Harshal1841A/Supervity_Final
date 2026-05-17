@@ -30,8 +30,8 @@ const buttonVariants = cva(
           'hover:bg-destructive/90',
         ],
         outline: [
-          'border border-border bg-white',
-          'hover:bg-secondary hover:border-brand-cornflower/30',
+          'border border-border bg-card',
+          'hover:bg-accent hover:border-brand-cornflower/30',
           'text-foreground',
         ],
         secondary: [
@@ -56,10 +56,10 @@ const buttonVariants = cva(
         ],
         // Glass: For secondary actions on light backgrounds
         glass: [
-          'bg-white/70 backdrop-blur-sm',
-          'border border-white/60 ring-1 ring-black/[0.03]',
+          'bg-card/70 backdrop-blur-sm',
+          'border border-border/60 ring-1 ring-black/[0.03]',
           'text-foreground',
-          'hover:bg-white/90 hover:ring-brand-cornflower/20',
+          'hover:bg-card/90 hover:ring-brand-cornflower/20',
           'shadow-glass hover:shadow-glass-hover',
         ],
         // Accent: Cornflower blue for highlighted actions

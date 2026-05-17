@@ -204,19 +204,19 @@ export function PolicyEditModal({ policy, isOpen, onClose, onSave }: PolicyEditM
         onClick={onClose}
       >
         <motion.div
-          className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+          className="relative w-full max-w-2xl max-h-[90vh] bg-card rounded-2xl shadow-2xl overflow-hidden flex flex-col"
           variants={modalVariants}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border">
             <div className="flex items-center gap-3">
               <div className={cn(
                 'p-2 rounded-lg',
                 policy ? 'bg-blue-100' : 'bg-emerald-100'
               )}>
                 {policy ? (
-                  <Icons.pencil className="h-5 w-5 text-blue-600" />
+                  <Icons.pencil className="h-5 w-5 text-brand-cornflower" />
                 ) : (
                   <Icons.plus className="h-5 w-5 text-emerald-600" />
                 )}
@@ -236,7 +236,7 @@ export function PolicyEditModal({ policy, isOpen, onClose, onSave }: PolicyEditM
           </div>
 
           {/* Tabs */}
-          <div className="flex border-b border-gray-200">
+          <div className="flex border-b border-border">
             <button
               className={cn(
                 'flex-1 py-3 text-sm font-medium transition-colors',
@@ -332,17 +332,17 @@ export function PolicyEditModal({ policy, isOpen, onClose, onSave }: PolicyEditM
                         'p-4 rounded-xl border-2 transition-all text-left',
                         formData.policy_type === 'logical'
                           ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-border hover:border-gray-300'
                       )}
                     >
                       <div className="flex items-center gap-2 mb-1">
                         <Icons.grid className={cn(
                           'h-5 w-5',
-                          formData.policy_type === 'logical' ? 'text-blue-600' : 'text-gray-400'
+                          formData.policy_type === 'logical' ? 'text-brand-cornflower' : 'text-gray-400'
                         )} />
                         <span className={cn(
                           'font-medium',
-                          formData.policy_type === 'logical' ? 'text-blue-700' : 'text-gray-700'
+                          formData.policy_type === 'logical' ? 'text-brand-cornflower' : 'text-muted-foreground'
                         )}>
                           Structured Rules
                         </span>
@@ -358,7 +358,7 @@ export function PolicyEditModal({ policy, isOpen, onClose, onSave }: PolicyEditM
                         'p-4 rounded-xl border-2 transition-all text-left',
                         formData.policy_type === 'natural_language'
                           ? 'border-purple-500 bg-purple-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          : 'border-border hover:border-gray-300'
                       )}
                     >
                       <div className="flex items-center gap-2 mb-1">
@@ -368,7 +368,7 @@ export function PolicyEditModal({ policy, isOpen, onClose, onSave }: PolicyEditM
                         )} />
                         <span className={cn(
                           'font-medium',
-                          formData.policy_type === 'natural_language' ? 'text-purple-700' : 'text-gray-700'
+                          formData.policy_type === 'natural_language' ? 'text-purple-700' : 'text-muted-foreground'
                         )}>
                           Natural Language
                         </span>
@@ -566,7 +566,7 @@ export function PolicyEditModal({ policy, isOpen, onClose, onSave }: PolicyEditM
                   >
                     <span
                       className={cn(
-                        'absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform',
+                        'absolute top-0.5 w-5 h-5 rounded-full bg-card shadow transition-transform',
                         formData.is_active ? 'left-6' : 'left-0.5'
                       )}
                     />
@@ -575,7 +575,7 @@ export function PolicyEditModal({ policy, isOpen, onClose, onSave }: PolicyEditM
 
                 {/* Rule Summary (if available) */}
                 {formData.dsl && formData.policy_type === 'logical' && (
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="p-4 bg-accent rounded-lg border border-border">
                     <div className="flex items-center gap-2 mb-2">
                       <Icons.info className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm font-medium text-foreground">Rule Summary</span>
@@ -591,7 +591,7 @@ export function PolicyEditModal({ policy, isOpen, onClose, onSave }: PolicyEditM
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-accent">
             <Button variant="ghost" onClick={onClose}>
               Cancel
             </Button>

@@ -177,7 +177,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         <Command
           className={cn(
             'rounded-xl',
-            'bg-white/95 backdrop-blur-xl',
+            'bg-card/95 backdrop-blur-xl',
             'overflow-hidden'
           )}
           loop
@@ -225,7 +225,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     className={cn(
                       'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5',
                       'text-sm text-foreground',
-                      'aria-selected:bg-brand-navy aria-selected:text-white',
+                      'aria-selected:bg-accent aria-selected:text-brand-cornflower',
                       'transition-colors'
                     )}
                   >
@@ -253,7 +253,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   className={cn(
                     'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5',
                     'text-sm text-foreground',
-                    'aria-selected:bg-brand-navy aria-selected:text-white',
+                    'aria-selected:bg-accent aria-selected:text-brand-cornflower',
                     'transition-colors'
                   )}
                 >
@@ -276,7 +276,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   className={cn(
                     'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5',
                     'text-sm text-foreground',
-                    'aria-selected:bg-brand-navy aria-selected:text-white',
+                    'aria-selected:bg-accent aria-selected:text-brand-cornflower',
                     'transition-colors'
                   )}
                 >
@@ -299,7 +299,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   className={cn(
                     'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5',
                     'text-sm text-foreground',
-                    'aria-selected:bg-brand-navy aria-selected:text-white',
+                    'aria-selected:bg-accent aria-selected:text-brand-cornflower',
                     'transition-colors'
                   )}
                 >

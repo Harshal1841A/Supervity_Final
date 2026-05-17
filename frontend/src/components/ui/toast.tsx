@@ -19,11 +19,11 @@ export function ToastProvider() {
         style: {
           padding: '16px',
           borderRadius: '16px',
-          background: 'rgba(255, 255, 255, 0.95)',
+          background: 'hsl(var(--card) / 0.95)',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.6)',
+          border: '1px solid hsl(var(--border) / 0.6)',
           boxShadow: '0 8px 30px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03)',
-          color: '#141A42',
+          color: 'hsl(var(--foreground))',
           fontSize: '14px',
           maxWidth: '400px',
         },
@@ -53,8 +53,8 @@ export const toast = {
         <div
           className={cn(
             'flex items-start gap-3 rounded-2xl p-4',
-            'bg-white/95 backdrop-blur-xl',
-            'border border-white/60 ring-1 ring-black/[0.03]',
+            'bg-card/95 backdrop-blur-xl',
+            'border border-border/60 ring-1 ring-black/[0.03]',
             'shadow-float',
             t.visible ? 'animate-slide-in-right' : 'animate-fade-out'
           )}
@@ -91,8 +91,8 @@ export const toast = {
         <div
           className={cn(
             'flex items-start gap-3 rounded-2xl p-4',
-            'bg-white/95 backdrop-blur-xl',
-            'border border-white/60 ring-1 ring-black/[0.03]',
+            'bg-card/95 backdrop-blur-xl',
+            'border border-border/60 ring-1 ring-black/[0.03]',
             'shadow-float',
             t.visible ? 'animate-slide-in-right' : 'animate-fade-out'
           )}
@@ -129,8 +129,8 @@ export const toast = {
         <div
           className={cn(
             'flex items-start gap-3 rounded-2xl p-4',
-            'bg-white/95 backdrop-blur-xl',
-            'border border-white/60 ring-1 ring-black/[0.03]',
+            'bg-card/95 backdrop-blur-xl',
+            'border border-border/60 ring-1 ring-black/[0.03]',
             'shadow-float',
             t.visible ? 'animate-slide-in-right' : 'animate-fade-out'
           )}
@@ -167,8 +167,8 @@ export const toast = {
         <div
           className={cn(
             'flex items-start gap-3 rounded-2xl p-4',
-            'bg-white/95 backdrop-blur-xl',
-            'border border-white/60 ring-1 ring-black/[0.03]',
+            'bg-card/95 backdrop-blur-xl',
+            'border border-border/60 ring-1 ring-black/[0.03]',
             'shadow-float',
             t.visible ? 'animate-slide-in-right' : 'animate-fade-out'
           )}

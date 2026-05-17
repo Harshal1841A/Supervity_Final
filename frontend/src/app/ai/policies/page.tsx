@@ -14,111 +14,7 @@ import { CreateWithAI } from '@/components/ai/policies/CreateWithAI'
 import { PermissionMatrixTab } from '@/components/ai/policies/PermissionMatrixTab'
 import { StructuredBuilder } from '@/components/ai/policies/StructuredBuilder'
 
-// ============================================================================
-// Demo Data — Replace with your own API integration
-// ============================================================================
-
-const DEMO_POLICIES: Policy[] = [
-  {
-    id: 'demo-001',
-    name: 'Auto-Approve Low Value Invoices',
-    description: 'Automatically approve invoices under $500 from approved vendors.',
-    natural_language: 'If an invoice total is less than $500 and the vendor is in our approved vendor list, automatically approve for payment without requiring manual review.',
-    summary: 'Auto-approves low-value invoices from trusted vendors to reduce manual workload.',
-    policy_type: 'logical',
-    dsl: { conditions: [{ field: 'amount', operator: 'less_than', value: '500' }, { field: 'vendor_status', operator: 'equals', value: 'approved' }], actions: [{ type: 'auto_approve' }], match_mode: 'all' },
-    refined_instruction: null,
-    ai_instruction: 'WHEN amount < 500 AND vendor_status = approved THEN auto_approve',
-    entity_name: 'invoice',
-    is_active: true,
-    priority: 10,
-    tags: ['finance', 'auto-approve', 'demo'],
-    execution_count: 120,
-    last_executed_at: new Date().toISOString(),
-    created_at: new Date(Date.now() - 30 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 2 * 3600000).toISOString(),
-  },
-  {
-    id: 'demo-002',
-    name: 'CFO Approval for Large Transactions',
-    description: 'Require CFO approval for any transaction exceeding $50,000.',
-    natural_language: 'Any transaction or purchase order exceeding $50,000 must be reviewed and approved by the CFO before processing.',
-    summary: 'Enforces executive approval on high-value transactions.',
-    policy_type: 'logical',
-    dsl: { conditions: [{ field: 'amount', operator: 'greater_than', value: '50000' }], actions: [{ type: 'require_approval', value: 'CFO' }], match_mode: 'all' },
-    refined_instruction: null,
-    ai_instruction: 'WHEN amount > 50000 THEN require_approval(CFO)',
-    entity_name: 'transaction',
-    is_active: true,
-    priority: 5,
-    tags: ['finance', 'escalation', 'demo'],
-    execution_count: 45,
-    last_executed_at: new Date(Date.now() - 3600000).toISOString(),
-    created_at: new Date(Date.now() - 25 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 4 * 3600000).toISOString(),
-  },
-  {
-    id: 'demo-003',
-    name: 'New Employee Onboarding Checklist',
-    description: 'Automatically assign onboarding steps when a new employee is created.',
-    natural_language: 'When a new employee record is created, automatically assign the standard onboarding checklist, notify their manager, and schedule the Day 1 orientation meeting.',
-    summary: 'Triggers automated onboarding workflow for new hires.',
-    policy_type: 'natural_language',
-    dsl: null,
-    refined_instruction: 'On new employee creation: assign onboarding checklist, notify manager, schedule Day 1 orientation.',
-    ai_instruction: 'On new employee creation: assign onboarding checklist, notify manager, schedule Day 1 orientation.',
-    entity_name: 'employee',
-    is_active: true,
-    priority: 15,
-    tags: ['hr', 'onboarding', 'demo'],
-    execution_count: 30,
-    last_executed_at: new Date(Date.now() - 2 * 3600000).toISOString(),
-    created_at: new Date(Date.now() - 20 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 6 * 3600000).toISOString(),
-  },
-  {
-    id: 'demo-004',
-    name: 'Suspicious Login Alert',
-    description: 'Flag and alert on logins from new devices or unusual locations.',
-    natural_language: 'If a user logs in from a new device or from a country they have never logged in from before, flag the session for security review and send an alert to the user email.',
-    summary: 'Detects and alerts on anomalous login patterns for security.',
-    policy_type: 'natural_language',
-    dsl: null,
-    refined_instruction: 'On login: if device is new OR country is new, flag session for review, send email alert.',
-    ai_instruction: 'On login: if device is new OR country is new, flag session for review, send email alert.',
-    entity_name: 'session',
-    is_active: true,
-    priority: 1,
-    tags: ['security', 'alerting', 'demo'],
-    execution_count: 85,
-    last_executed_at: new Date(Date.now() - 30 * 60000).toISOString(),
-    created_at: new Date(Date.now() - 15 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 8 * 3600000).toISOString(),
-  },
-  {
-    id: 'demo-005',
-    name: 'Enterprise Ticket Escalation',
-    description: 'Auto-escalate support tickets from high-value customers.',
-    natural_language: 'When a support ticket is created by an enterprise-tier customer or a customer with annual contract value over $100K, automatically escalate to Tier 2 support and set priority to high.',
-    summary: 'Ensures enterprise customers receive priority support.',
-    policy_type: 'logical',
-    dsl: { conditions: [{ field: 'customer_tier', operator: 'equals', value: 'enterprise' }], actions: [{ type: 'escalate', value: 'tier_2' }, { type: 'set_priority', value: 'high' }], match_mode: 'any' },
-    refined_instruction: null,
-    ai_instruction: 'WHEN customer_tier = enterprise OR contract_value > 100000 THEN escalate(tier_2), set_priority(high)',
-    entity_name: 'ticket',
-    is_active: false,
-    priority: 8,
-    tags: ['support', 'escalation', 'demo'],
-    execution_count: 15,
-    last_executed_at: new Date(Date.now() - 12 * 3600000).toISOString(),
-    created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 10 * 3600000).toISOString(),
-  },
-]
-
-// ============================================================================
-// Animation Variants
-// ============================================================================
+// Demo data removed. Policies are fetched from the real API.
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -179,16 +75,22 @@ export default function AIPoliciesPage() {
   const [isSavingStructured, setIsSavingStructured] = useState(false)
 
   // ============================================================================
-  // Data — Loaded from demo data (replace with API fetch)
+  // Data — Loaded from API
   // ============================================================================
 
-  const loadPolicies = useCallback(() => {
+  const loadPolicies = useCallback(async () => {
     setIsLoading(true)
-    // Simulate loading — replace with real API call
-    setTimeout(() => {
-      setPolicies(DEMO_POLICIES)
-      setIsLoading(false)
-    }, 300)
+    try {
+      const res = await fetch("/api/dashboard/policies");
+      if (res.ok) {
+        const data = await res.json();
+        setPolicies(data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
   }, [])
 
   useEffect(() => {
@@ -212,16 +114,33 @@ export default function AIPoliciesPage() {
   const handleSavePolicy = useCallback(async () => {
     loadPolicies()
   }, [loadPolicies])
-
-  const togglePolicyStatus = useCallback(async (id: string, _isActive: boolean) => {
-    // Toggle locally (replace with API call)
-    setPolicies(prev => prev.map(p => p.id === id ? { ...p, is_active: !p.is_active } : p))
-  }, [])
+  const togglePolicyStatus = useCallback(async (id: string, isActive: boolean) => {
+    try {
+      const res = await fetch(`/api/dashboard/policies?id=${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: !isActive })
+      });
+      if (res.ok) {
+        setPolicies(prev => prev.map(p => p.id === id ? { ...p, is_active: !isActive } : p));
+      }
+    } catch (e) {
+      console.error("Failed to toggle policy status", e);
+    }
+  }, []);
 
   const deletePolicy = useCallback(async (id: string) => {
-    // Delete locally (replace with API call)
-    setPolicies(prev => prev.filter(p => p.id !== id))
-  }, [])
+    try {
+      const res = await fetch(`/api/dashboard/policies?id=${encodeURIComponent(id)}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        setPolicies(prev => prev.filter(p => p.id !== id));
+      }
+    } catch (e) {
+      console.error("Failed to delete policy", e);
+    }
+  }, []);
 
   const handlePolicyCreate = async (policyData: {
     name: string
@@ -234,28 +153,27 @@ export default function AIPoliciesPage() {
     tags: string[]
     priority: number
   }) => {
-    // Add locally (replace with API call)
-    const newPolicy: Policy = {
-      id: `user-${Date.now()}`,
-      name: policyData.name,
-      description: policyData.description,
-      natural_language: policyData.naturalLanguage,
-      summary: policyData.description,
-      policy_type: policyData.policyType,
-      dsl: policyData.dsl as Policy['dsl'],
-      refined_instruction: policyData.refinedInstruction,
-      ai_instruction: policyData.naturalLanguage,
-      entity_name: policyData.entityName,
-      is_active: true,
-      priority: policyData.priority,
-      tags: policyData.tags,
-      execution_count: 0,
-      last_executed_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+    try {
+      const res = await fetch("/api/dashboard/policies", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...policyData,
+          natural_language: policyData.naturalLanguage,
+          policy_type: policyData.policyType,
+          refined_instruction: policyData.refinedInstruction,
+          entity_name: policyData.entityName,
+          ai_instruction: policyData.naturalLanguage,
+        })
+      });
+      if (res.ok) {
+        const newPolicy = await res.json();
+        setPolicies(prev => [newPolicy, ...prev]);
+        setActiveTab('policies');
+      }
+    } catch (e) {
+      console.error("Failed to create policy", e);
     }
-    setPolicies(prev => [newPolicy, ...prev])
-    setActiveTab('policies')
   }
 
   // ============================================================================
@@ -342,7 +260,7 @@ export default function AIPoliciesPage() {
 
       {/* Tabs - AT THE TOP */}
       <motion.div variants={itemVariants}>
-        <div className="flex gap-1 p-1.5 bg-gray-100 rounded-xl">
+        <div className="flex gap-1 p-1.5 bg-border rounded-xl">
           {TABS.map((tab) => (
             <motion.button
               key={tab.id}
@@ -359,7 +277,7 @@ export default function AIPoliciesPage() {
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 bg-white rounded-lg shadow-sm"
+                  className="absolute inset-0 bg-card rounded-lg shadow-sm"
                   transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                 />
               )}
@@ -388,12 +306,12 @@ export default function AIPoliciesPage() {
             {[
               { value: stats.total, label: 'Total Policies', icon: Icons.layers, bg: 'bg-brand-navy/10', color: 'text-brand-navy' },
               { value: stats.active, label: 'Active', icon: Icons.check, bg: 'bg-emerald-100', color: 'text-emerald-600' },
-              { value: stats.structured, label: 'Structured', icon: Icons.grid, bg: 'bg-blue-100', color: 'text-blue-600' },
+              { value: stats.structured, label: 'Structured', icon: Icons.grid, bg: 'bg-blue-100', color: 'text-brand-cornflower' },
               { value: stats.natural, label: 'Natural Language', icon: Icons.brain, bg: 'bg-purple-100', color: 'text-purple-600' },
             ].map((stat) => (
               <motion.div 
                 key={stat.label}
-                className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 hover:shadow-md transition-all cursor-default"
+                className="bg-card rounded-xl border border-border p-4 hover:border-border hover:shadow-md transition-all cursor-default"
                 whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
               >
                 <div className="flex items-center gap-3">
@@ -426,7 +344,7 @@ export default function AIPoliciesPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search policies..."
                 className={cn(
-                  'w-full pl-10 pr-4 py-2.5 rounded-lg border border-input bg-white',
+                  'w-full pl-10 pr-4 py-2.5 rounded-lg border border-input bg-card',
                   'text-sm focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50'
                 )}
               />
@@ -438,7 +356,7 @@ export default function AIPoliciesPage() {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as FilterType)}
-                className="px-3 py-2.5 rounded-lg border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
+                className="px-3 py-2.5 rounded-lg border border-input bg-card text-sm focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
               >
                 <option value="all">All</option>
                 <option value="active">Active</option>
@@ -454,7 +372,7 @@ export default function AIPoliciesPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortType)}
-                className="px-3 py-2.5 rounded-lg border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
+                className="px-3 py-2.5 rounded-lg border border-input bg-card text-sm focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
               >
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
@@ -561,7 +479,7 @@ export default function AIPoliciesPage() {
                     value={structuredName}
                     onChange={(e) => setStructuredName(e.target.value)}
                     placeholder="e.g., Auto-Approve Low Value Items"
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
+                    className="w-full px-4 py-2.5 rounded-lg border border-border text-base focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
                   />
                 </div>
                 <StructuredBuilder

@@ -289,13 +289,13 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
               </p>
             </div>
 
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl border border-gray-200 p-6 shadow-lg">
+            <div className="bg-card/95 backdrop-blur-sm rounded-xl border border-border p-6 shadow-lg">
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Example: If an invoice is under $500 and from an approved vendor, auto-approve it without manual review..."
                 className={cn(
-                  'w-full min-h-[180px] rounded-lg border-0 bg-gray-50 p-4',
+                  'w-full min-h-[180px] rounded-lg border-0 bg-accent p-4',
                   'text-base text-foreground placeholder:text-muted-foreground',
                   'resize-none focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50',
                   'transition-all duration-200'
@@ -338,7 +338,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
             </div>
 
             {/* Examples */}
-            <div className="bg-gray-50 rounded-xl p-4">
+            <div className="bg-accent rounded-xl p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
                 Try an example
               </p>
@@ -349,7 +349,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                     onClick={() => setInput(example)}
                     className={cn(
                       'text-sm text-left px-3 py-2 rounded-lg',
-                      'bg-white border border-gray-200 text-gray-700',
+                      'bg-card border border-border text-muted-foreground',
                       'hover:border-brand-cornflower hover:bg-brand-cornflower/5 transition-colors',
                       'max-w-full'
                     )}
@@ -387,7 +387,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                   ? 'bg-emerald-100 text-emerald-700'
                   : analysis.confidence >= 0.6
                     ? 'bg-amber-100 text-amber-700'
-                    : 'bg-gray-100 text-gray-700'
+                    : 'bg-border text-muted-foreground'
               )}>
                 {Math.round(analysis.confidence * 100)}% confidence
               </span>
@@ -397,15 +397,15 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
             </div>
 
             {/* Type Toggle */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl border border-gray-200 p-6 shadow-lg">
+            <div className="bg-card/95 backdrop-blur-sm rounded-xl border border-border p-6 shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-gray-700">Policy Type</span>
+                <span className="text-sm font-medium text-muted-foreground">Policy Type</span>
                 <button
                   onClick={handleToggleType}
                   className={cn(
                     'flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all',
                     policyType === 'logical'
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      ? 'border-blue-500 bg-blue-50 text-brand-cornflower'
                       : 'border-purple-500 bg-purple-50 text-purple-700'
                   )}
                 >
@@ -429,7 +429,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                 <div className="space-y-4">
                   {/* Conditions */}
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 mb-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-brand-cornflower mb-2">
                       Conditions ({analysis.dsl.match_mode === 'any' ? 'Match ANY' : 'Match ALL'})
                     </p>
                     <div className="space-y-2">
@@ -437,14 +437,14 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                         const opInfo = OPERATOR_SYMBOLS[cond.operator] || { symbol: cond.operator, label: cond.operator }
                         return (
                           <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-100">
-                            <span className="w-6 h-6 rounded bg-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold">
+                            <span className="w-6 h-6 rounded bg-blue-200 text-brand-cornflower flex items-center justify-center text-xs font-bold">
                               {idx + 1}
                             </span>
-                            <span className="font-medium text-blue-900">
+                            <span className="font-medium text-foreground">
                               {cond.field.replace(/_/g, ' ')}
                             </span>
                             <span className="text-blue-500 text-lg font-mono">{opInfo.symbol}</span>
-                            <span className="font-mono text-blue-800">{formatValue(cond.value)}</span>
+                            <span className="font-mono text-foreground">{formatValue(cond.value)}</span>
                           </div>
                         )
                       })}
@@ -489,15 +489,15 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
             </div>
 
             {/* Suggested Name */}
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl border border-gray-200 p-4 shadow-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="bg-card/95 backdrop-blur-sm rounded-xl border border-border p-4 shadow-lg">
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
                 Suggested Name
               </label>
               <input
                 type="text"
                 value={policyName}
                 onChange={(e) => setPolicyName(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
+                className="w-full px-4 py-2 rounded-lg border border-border text-base focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
               />
             </div>
 
@@ -586,7 +586,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                       {conflictResult.conflicts.map((c) => (
                         <label key={c.conflicting_rule_id} className={cn(
                           'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
-                          selectedConflicts.has(c.conflicting_rule_id) ? 'bg-red-100 border-red-300' : 'bg-white border-red-100 hover:bg-red-50'
+                          selectedConflicts.has(c.conflicting_rule_id) ? 'bg-red-100 border-red-300' : 'bg-card border-red-100 hover:bg-red-50'
                         )}>
                           <input type="checkbox" checked={selectedConflicts.has(c.conflicting_rule_id)} onChange={() => toggleConflict(c.conflicting_rule_id)} className="mt-0.5 h-4 w-4 rounded border-red-300 text-red-600" />
                           <div>
@@ -620,7 +620,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
 
             {/* Warnings */}
             {conflictResult.warnings && conflictResult.warnings.length > 0 && (
-              <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="p-3 bg-accent border border-border rounded-lg">
                 <p className="text-xs text-muted-foreground">{conflictResult.warnings.join(', ')}</p>
               </div>
             )}
@@ -655,10 +655,10 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
               </p>
             </div>
 
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl border border-gray-200 p-6 shadow-lg space-y-5">
+            <div className="bg-card/95 backdrop-blur-sm rounded-xl border border-border p-6 shadow-lg space-y-5">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                   Policy Name *
                 </label>
                 <input
@@ -666,13 +666,13 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                   value={policyName}
                   onChange={(e) => setPolicyName(e.target.value)}
                   placeholder="e.g., Auto-Approve Low Value Invoices"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
+                  className="w-full px-4 py-2.5 rounded-lg border border-border text-base focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                   Description (optional)
                 </label>
                 <textarea
@@ -680,13 +680,13 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Brief description of what this policy does..."
                   rows={2}
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-base resize-none focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
+                  className="w-full px-4 py-2.5 rounded-lg border border-border text-base resize-none focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
                 />
               </div>
 
               {/* Priority */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                   Priority (lower = runs first)
                 </label>
                 <div className="flex items-center gap-4">
@@ -698,7 +698,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                     onChange={(e) => setPriority(parseInt(e.target.value))}
                     className="flex-1"
                   />
-                  <span className="w-12 text-center text-sm font-mono bg-gray-100 px-2 py-1 rounded">
+                  <span className="w-12 text-center text-sm font-mono bg-border px-2 py-1 rounded">
                     {priority}
                   </span>
                 </div>
@@ -706,7 +706,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
 
               {/* Tags */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                   Tags
                 </label>
                 <div className="flex items-center gap-2 mb-2">
@@ -716,7 +716,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                     placeholder="Add a tag"
-                    className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
+                    className="flex-1 px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-2 focus:ring-brand-cornflower/50"
                   />
                   <Button variant="outline" size="sm" onClick={handleAddTag}>
                     Add
@@ -726,7 +726,7 @@ export function CreateWithAI({ onPolicyCreate, onCancel }: CreateWithAIProps) {
                   {tags.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 text-sm"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-border text-sm"
                     >
                       #{tag}
                       <button

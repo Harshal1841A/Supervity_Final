@@ -8,6 +8,7 @@ import { Header } from '@/components/layout/Header'
 import { Sidebar, SidebarProvider, useSidebar } from '@/components/layout/Sidebar'
 import { MobileSidebar } from '@/components/layout/MobileSidebar'
 import { VisualPattern } from '@/components/brand'
+import AIManager from '@/components/AIManager'
 import { Funnel_Display, Geologica } from 'next/font/google'
 import { cn } from '@/lib/utils'
 
@@ -40,7 +41,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   // Auth routes get a clean, full-screen layout
   if (isAuthRoute) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100'>
+      <div className='min-h-screen bg-background'>
         <VisualPattern variant='subtle' />
         <main className='relative z-10 flex min-h-screen items-center justify-center p-4'>
           {children}
@@ -96,6 +97,8 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+      {/* AI Manager — persists on every page */}
+      <AIManager />
     </>
   )
 }

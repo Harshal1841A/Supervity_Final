@@ -20,7 +20,6 @@ export interface Insight {
   created_at: string
   is_dismissed?: boolean
   is_actioned?: boolean
-  is_demo?: boolean
 }
 
 interface InsightCardProps {
@@ -37,63 +36,63 @@ export function getSeverityConfig(severity: InsightSeverity) {
   const configs = {
     critical: {
       icon: Icons.alertCircle,
-      bg: 'bg-red-50',
-      border: 'border-red-200',
+      bg: 'bg-red-500/10',
+      border: 'border-red-500/40',
       accent: 'border-l-red-500',
-      iconBg: 'bg-red-100',
-      iconColor: 'text-red-600',
-      badge: 'bg-red-100 text-red-700',
-      textColor: 'text-red-700',
+      iconBg: 'bg-red-500/20',
+      iconColor: 'text-red-400',
+      badge: 'bg-red-500/25 text-red-300',
+      textColor: 'text-red-400',
     },
     high: {
       icon: Icons.alertCircle,
-      bg: 'bg-red-50/70',
-      border: 'border-red-200',
+      bg: 'bg-red-500/8',
+      border: 'border-red-400/30',
       accent: 'border-l-red-400',
-      iconBg: 'bg-red-100',
-      iconColor: 'text-red-500',
-      badge: 'bg-red-100 text-red-600',
-      textColor: 'text-red-600',
+      iconBg: 'bg-red-500/15',
+      iconColor: 'text-red-400',
+      badge: 'bg-red-500/20 text-red-300',
+      textColor: 'text-red-400',
     },
     warning: {
       icon: Icons.alertTriangle,
-      bg: 'bg-amber-50',
-      border: 'border-amber-200',
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/40',
       accent: 'border-l-amber-500',
-      iconBg: 'bg-amber-100',
-      iconColor: 'text-amber-600',
-      badge: 'bg-amber-100 text-amber-700',
-      textColor: 'text-amber-700',
+      iconBg: 'bg-amber-500/20',
+      iconColor: 'text-amber-400',
+      badge: 'bg-amber-500/25 text-amber-300',
+      textColor: 'text-amber-400',
     },
     medium: {
       icon: Icons.alertTriangle,
-      bg: 'bg-amber-50/70',
-      border: 'border-amber-200',
+      bg: 'bg-amber-500/8',
+      border: 'border-amber-400/30',
       accent: 'border-l-amber-400',
-      iconBg: 'bg-amber-100',
-      iconColor: 'text-amber-500',
-      badge: 'bg-amber-100 text-amber-600',
-      textColor: 'text-amber-600',
+      iconBg: 'bg-amber-500/15',
+      iconColor: 'text-amber-400',
+      badge: 'bg-amber-500/20 text-amber-300',
+      textColor: 'text-amber-400',
     },
     low: {
       icon: Icons.info,
-      bg: 'bg-sky-50/70',
-      border: 'border-sky-200',
+      bg: 'bg-sky-500/8',
+      border: 'border-sky-400/30',
       accent: 'border-l-sky-400',
-      iconBg: 'bg-sky-100',
-      iconColor: 'text-sky-500',
-      badge: 'bg-sky-100 text-sky-600',
-      textColor: 'text-sky-600',
+      iconBg: 'bg-sky-500/15',
+      iconColor: 'text-sky-400',
+      badge: 'bg-sky-500/20 text-sky-300',
+      textColor: 'text-sky-400',
     },
     info: {
       icon: Icons.info,
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
-      accent: 'border-l-blue-500',
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      badge: 'bg-blue-100 text-blue-700',
-      textColor: 'text-blue-700',
+      bg: 'bg-brand-cornflower/8',
+      border: 'border-brand-cornflower/30',
+      accent: 'border-l-brand-cornflower',
+      iconBg: 'bg-brand-cornflower/15',
+      iconColor: 'text-brand-cornflower',
+      badge: 'bg-brand-cornflower/20 text-sky-200',
+      textColor: 'text-brand-cornflower',
     },
   }
   return configs[severity] || configs.info
@@ -180,7 +179,7 @@ export function InsightCard({ insight, onAction, onDismiss }: InsightCardProps) 
                   key={key}
                   className={cn(
                     'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1',
-                    'bg-white/50 text-xs font-medium text-foreground'
+                    'bg-card/50 text-xs font-medium text-foreground'
                   )}
                 >
                   <span className="text-muted-foreground">{key.replace(/_/g, ' ')}:</span>

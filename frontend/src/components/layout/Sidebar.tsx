@@ -59,10 +59,10 @@ interface NavSection {
 
 const navItems: NavSection[] = [
   {
-    title: 'Platform',
+    title: 'GrowthPilot OS',
     items: [
-      { href: '/', label: 'Dashboard', icon: Icons.dashboard },
-      { href: '/workbench', label: 'Workbench', icon: Icons.workbench },
+      { href: '/', label: 'Live Operations', icon: Icons.activity },
+      { href: '/workbench', label: 'AI Workbench', icon: Icons.brain },
     ],
   },
   {
@@ -107,8 +107,8 @@ function NavLink({
         'text-sm font-medium',
         'transition-all duration-200 ease-out',
         isActive
-          ? 'bg-brand-navy text-white shadow-soft'
-          : 'text-brand-muted hover:translate-x-1 hover:bg-brand-cornflower/10 hover:text-brand-navy',
+          ? 'bg-accent text-brand-cornflower shadow-soft'
+          : 'text-brand-muted hover:translate-x-1 hover:bg-brand-cornflower/10 hover:text-brand-cornflower',
         isCollapsed && 'justify-center px-2 hover:translate-x-0'
       )}
     >
@@ -117,8 +117,8 @@ function NavLink({
         className={cn(
           'h-5 w-5 shrink-0 transition-all duration-200',
           isActive
-            ? 'text-white'
-            : 'text-brand-muted group-hover:scale-110 group-hover:text-brand-navy'
+            ? 'text-brand-cornflower'
+            : 'text-brand-muted group-hover:scale-110 group-hover:text-brand-cornflower'
         )}
       />
 
@@ -132,8 +132,8 @@ function NavLink({
             'text-[10px] font-semibold',
             'transition-transform duration-200',
             isActive
-              ? 'bg-white/20 text-white'
-              : 'bg-brand-cornflower/20 text-brand-navy group-hover:scale-110',
+              ? 'bg-brand-cornflower/20 text-brand-cornflower'
+              : 'bg-brand-cornflower/10 text-brand-cornflower group-hover:scale-110',
             isCollapsed && 'absolute -right-1 -top-1 h-4 min-w-4 text-[9px]'
           )}
         >
@@ -183,7 +183,7 @@ function SidebarUser({ isCollapsed }: { isCollapsed: boolean }) {
 
       {!isCollapsed && (
         <div className='min-w-0 flex-1'>
-          <p className='truncate text-sm font-medium text-brand-navy'>
+          <p className='truncate text-sm font-medium text-brand-cornflower'>
             {session.user.name}
           </p>
           <p className='truncate text-xs text-brand-muted'>
@@ -199,7 +199,7 @@ function SidebarUser({ isCollapsed }: { isCollapsed: boolean }) {
           onClick={() => {
             window.location.href = `${basePath}/api/auth/logout`
           }}
-          className='shrink-0 text-brand-muted hover:text-brand-navy'
+          className='shrink-0 text-brand-muted hover:text-brand-cornflower'
           title='Sign Out'
         >
           <Icons.logout className='h-4 w-4' />
@@ -233,7 +233,7 @@ export function Sidebar() {
           'hidden flex-col md:flex',
           'fixed bottom-0 left-0 top-0 z-fixed',
           // Glass Rail effect
-          'bg-white/70 backdrop-blur-xl',
+          'bg-card/70 backdrop-blur-xl',
           'border-r border-black/[0.06]',
           // Inner highlight
           'shadow-[inset_-1px_0_0_rgba(255,255,255,0.8)]',
@@ -263,7 +263,7 @@ export function Sidebar() {
 
             {!isCollapsed && (
               <div className='flex flex-col transition-transform duration-200 group-hover:translate-x-0.5'>
-                <span className='font-display text-lg font-bold tracking-tight text-brand-navy'>
+                <span className='font-display text-lg font-bold tracking-tight text-brand-cornflower'>
                   AutoPilot
                 </span>
                 <span className='text-[10px] font-medium uppercase tracking-widest text-brand-muted'>
@@ -316,7 +316,7 @@ export function Sidebar() {
                 size={isCollapsed ? 'icon-sm' : 'sm'}
                 onClick={() => setIsCollapsed(!isCollapsed)}
                 className={cn(
-                  'w-full text-brand-muted hover:text-brand-navy',
+                  'w-full text-brand-muted hover:text-brand-cornflower',
                   isCollapsed && 'px-0'
                 )}
                 aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
