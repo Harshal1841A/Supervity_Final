@@ -6,6 +6,7 @@ import {
   buildFormData,
   type AgentName,
 } from "@/lib/supervity";
+import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -75,11 +76,74 @@ export async function POST(req: NextRequest) {
     if (supervityRes.body) {
       const drainStream = async () => {
         try {
+          const runId = supervityRes.headers.get("X-GrowthPilot-Run-Id") || `workbench_${Date.now()}`;
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           const reader = supervityRes.body!.getReader();
+          const decoder = new TextDecoder();
+          let buffer = "";
+
           while (true) {
-            const { done } = await reader.read();
+            const { done, value } = await reader.read();
             if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() ?? "";
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || trimmed.startsWith(":")) continue;
+
+              const dataLine = trimmed.startsWith("data:") ? trimmed.slice(5).trim() : trimmed;
+              if (!dataLine || dataLine === "[DONE]") continue;
+
+              let evt: Record<string, unknown> = {};
+              try { evt = JSON.parse(dataLine); } catch { evt = { message: dataLine }; }
+
+              const evtAgentName = (evt.node_name ?? evt.agent ?? evt.operator ?? evt.source ?? agentName) as string;
+              const eventType = (evt.event ?? evt.type ?? evt.status ?? "nominal") as string;
+              const statusRaw = eventType.toLowerCase();
+
+              let msgText: string;
+              if (evt.output && typeof evt.output === "string" && evt.output.trim()) {
+                msgText = evt.output.trim();
+              } else if (evt.message && typeof evt.message === "string" && evt.message.trim()) {
+                msgText = evt.message.trim();
+              } else if (evt.content && typeof evt.content === "string" && evt.content.trim()) {
+                msgText = evt.content.trim();
+              } else if (evt.text && typeof evt.text === "string" && evt.text.trim()) {
+                msgText = evt.text.trim();
+              } else if (evt.result && typeof evt.result === "string" && evt.result.trim()) {
+                msgText = evt.result.trim();
+              } else if (evt.summary && typeof evt.summary === "string" && evt.summary.trim()) {
+                msgText = evt.summary.trim();
+              } else {
+                const eventLabel: Record<string, string> = {
+                  "thinking":      "Agent is analysing the situation…",
+                  "workflow-run":  "Workflow execution started.",
+                  "ping":          "Heartbeat — connection healthy.",
+                  "start":         "Agent task started.",
+                  "end":           "Agent task completed.",
+                  "tool-call":     "Calling external tool…",
+                  "tool-result":   "Tool returned a result.",
+                  "pending_human": "Awaiting human approval.",
+                  "completed":     "Agent sequence completed successfully.",
+                };
+                msgText = eventLabel[statusRaw] ?? `Event received: ${statusRaw}`;
+              }
+
+              // Persist log to database
+              await prisma.logEntry.create({
+                data: {
+                  agent: String(evtAgentName),
+                  status: String(statusRaw).toLowerCase(),
+                  action_taken: String(msgText),
+                  key_metrics: evt.key_metrics ? JSON.stringify(evt.key_metrics) : null,
+                  timestamp: new Date(),
+                  run_id: runId,
+                }
+              }).catch(() => {});
+            }
           }
         } catch (err) {
           console.error("[Workbench] Background stream drain error:", err);
