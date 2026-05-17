@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const workflowId = WORKFLOW_IDS[agentName];
-    
+
     // Construct inputs for the autonomous workflow
     let inputs: Record<string, string | number | undefined | null> = {
       brand_name: brandName || "GrowthPilot Default",
@@ -119,15 +119,15 @@ export async function POST(req: NextRequest) {
                 msgText = evt.summary.trim();
               } else {
                 const eventLabel: Record<string, string> = {
-                  "thinking":      "Agent is analysing the situation…",
-                  "workflow-run":  "Workflow execution started.",
-                  "ping":          "Heartbeat — connection healthy.",
-                  "start":         "Agent task started.",
-                  "end":           "Agent task completed.",
-                  "tool-call":     "Calling external tool…",
-                  "tool-result":   "Tool returned a result.",
+                  "thinking": "Agent is analysing the situation…",
+                  "workflow-run": "Workflow execution started.",
+                  "ping": "Heartbeat — connection healthy.",
+                  "start": "Agent task started.",
+                  "end": "Agent task completed.",
+                  "tool-call": "Calling external tool…",
+                  "tool-result": "Tool returned a result.",
                   "pending_human": "Awaiting human approval.",
-                  "completed":     "Agent sequence completed successfully.",
+                  "completed": "Agent sequence completed successfully.",
                 };
                 msgText = eventLabel[statusRaw] ?? `Event received: ${statusRaw}`;
               }
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
                   timestamp: new Date(),
                   run_id: runId,
                 }
-              }).catch(() => {});
+              }).catch(() => { });
             }
           }
         } catch (err) {

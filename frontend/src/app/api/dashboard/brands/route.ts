@@ -28,13 +28,18 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
-  if (!id) {
-    return NextResponse.json({ error: "id query param required" }, { status: 400 });
-  }
+  if (!id) return NextResponse.json({ error: "id query param required" }, { status: 400 });
   const body = await req.json();
-  const brand = await prisma.brand.update({
-    where: { id },
-    data: body,
-  });
+  const { name, hubspotUrl, sovDrop, crisisProb, wasteInr, currentCac, targetCac } = body;
+  const data: Record<string, unknown> = {};
+  if (name !== undefined) data.name = name;
+  if (hubspotUrl !== undefined) data.hubspotUrl = hubspotUrl;
+  if (sovDrop !== undefined) data.sovDrop = sovDrop;
+  if (crisisProb !== undefined) data.crisisProb = crisisProb;
+  if (wasteInr !== undefined) data.wasteInr = wasteInr;
+  if (currentCac !== undefined) data.currentCac = currentCac;
+  if (targetCac !== undefined) data.targetCac = targetCac;
+  if (Object.keys(data).length === 0) return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+  const brand = await prisma.brand.update({ where: { id }, data });
   return NextResponse.json(brand);
 }

@@ -88,6 +88,20 @@ def get_jwks():
         raise RuntimeError(f"Could not fetch JWKS from Keycloak: {e}")
 
 
+def _refresh_jwks():
+    """Clear the JWKS cache and re-fetch (called when a kid is not found, indicating key rotation)."""
+    get_jwks.cache_clear()
+    return get_jwks()
+
+
+def _find_rsa_key(jwks: dict, kid: str) -> dict:
+    """Find the RSA key matching the given kid from a JWKS response."""
+    for key in jwks.get("keys", []):
+        if key.get("kid") == kid:
+            return {k: key[k] for k in ("kty", "kid", "use", "n", "e") if k in key}
+    return {}
+
+
 def introspect_token(token: str) -> dict:
     """Makes a back-channel call to Keycloak's introspection endpoint to validate the token."""
     _, introspection_url = _get_keycloak_urls()
@@ -113,11 +127,6 @@ def introspect_token(token: str) -> dict:
 
 
 def get_current_user(token: str | None = Depends(oauth2_scheme)) -> dict | None:
-    """
-    This is the primary AUTHENTICATION dependency.
-    Its only job is to validate the JWT and return its claims.
-    It does NOT perform any authorization.
-    """
     if token is None:
         if AUTH_BYPASS:
             return _BYPASS_USER
@@ -129,23 +138,21 @@ def get_current_user(token: str | None = Depends(oauth2_scheme)) -> dict | None:
     )
     try:
         unverified_header = jwt.get_unverified_header(token)
-        jwks = get_jwks()
-        rsa_key = {}
-        for key in jwks["keys"]:
-            if key["kid"] == unverified_header["kid"]:
-                rsa_key = {k: key[k] for k in ("kty", "kid", "use", "n", "e")}
-                break
+        kid = unverified_header.get("kid")
+        ALLOWED_ALGORITHMS = ["RS256"]
+        rsa_key = _find_rsa_key(get_jwks(), kid)
+        if not rsa_key:
+            log.info(f"kid '{kid}' not found in cached JWKS, refreshing...")
+            rsa_key = _find_rsa_key(_refresh_jwks(), kid)
         if not rsa_key:
             raise credentials_exception
-
         jwt.decode(
             token,
             rsa_key,
-            algorithms=[unverified_header["alg"]],
+            algorithms=ALLOWED_ALGORITHMS,
             audience=KEYCLOAK_AUDIENCE,
             issuer=f"{KEYCLOAK_SERVER_URL}/realms/{KEYCLOAK_REALM}",
         )
-
         return introspect_token(token)
     except JWTError as e:
         log.warning(f"JWT validation error: {e}")

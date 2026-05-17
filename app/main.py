@@ -184,7 +184,7 @@ async def upload_file(
 ):
     """Upload a file to storage."""
     content = await file.read()
-    url = await storage.save(file_path, content, file.content_type)
+    url = await storage.upload(file_path, content, file.content_type)
     return {
         "path": file_path,
         "url": url,
@@ -201,10 +201,10 @@ async def download_file(
 ):
     """Download a file from storage."""
     try:
-        content, content_type = await storage.load(file_path)
+        content = await storage.download(file_path)
         return StreamingResponse(
             io.BytesIO(content),
-            media_type=content_type or "application/octet-stream",
+            media_type="application/octet-stream",
             headers={"Content-Disposition": f'attachment; filename="{file_path}"'},
         )
     except FileNotFoundError:
@@ -218,7 +218,14 @@ async def delete_file(
     user: dict = Depends(get_current_user),
 ):
     """Delete a file from storage."""
-    await storage.delete(file_path)
+    try:
+        deleted = await storage.delete(file_path)
+        if not deleted:
+            raise HTTPException(status_code=404, detail="File not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete file: {e}")
     return {"status": "deleted", "path": file_path}
 
 

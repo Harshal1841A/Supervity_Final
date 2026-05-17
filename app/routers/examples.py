@@ -26,7 +26,7 @@ log = logging.getLogger(__name__)
 router = APIRouter(tags=["Examples"])
 
 # Load the authorization engine
-authz_engine = AuthzEngine("app/authz.map.json", "app/public.map.json")
+authz_engine = AuthzEngine("app/public.map.json", "app/authz.map.json")
 
 # Optional: GeoIP for geofencing
 geoip_reader = None

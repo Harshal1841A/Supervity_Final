@@ -73,11 +73,13 @@ export async function DELETE(req: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "id query param required" }, { status: 400 });
   }
-  
-  // Just update status to APPROVED instead of deleting, or delete it
-  await prisma.workbenchTask.delete({
-    where: { id },
-  });
-
+  try {
+    await prisma.workbenchTask.delete({ where: { id } });
+  } catch (err: unknown) {
+    if ((err as { code?: string }).code === 'P2025') {
+      return NextResponse.json({ removed: id });
+    }
+    throw err;
+  }
   return NextResponse.json({ removed: id });
 }

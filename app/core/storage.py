@@ -207,7 +207,7 @@ class GCSStorage(StorageBackend):
         blob = self.bucket.blob(blob_name)
 
         # Run in executor to avoid blocking
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
 
         if isinstance(data, bytes):
             await loop.run_in_executor(
@@ -225,7 +225,7 @@ class GCSStorage(StorageBackend):
         blob_name = self._get_blob_name(path)
         blob = self.bucket.blob(blob_name)
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         try:
             data = await loop.run_in_executor(None, blob.download_as_bytes)
             return data
@@ -237,7 +237,7 @@ class GCSStorage(StorageBackend):
         blob_name = self._get_blob_name(path)
         blob = self.bucket.blob(blob_name)
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         try:
             await loop.run_in_executor(None, blob.delete)
             log.debug(f"🗑️ Deleted gs://{self.bucket_name}/{blob_name}")
@@ -249,13 +249,13 @@ class GCSStorage(StorageBackend):
         blob_name = self._get_blob_name(path)
         blob = self.bucket.blob(blob_name)
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, blob.exists)
 
     async def list_files(self, prefix: str = "") -> List[str]:
         full_prefix = self._get_blob_name(prefix)
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         blobs = await loop.run_in_executor(
             None,
             partial(list, self.client.list_blobs(self.bucket_name, prefix=full_prefix)),
@@ -275,7 +275,7 @@ class GCSStorage(StorageBackend):
     async def delete_all(self, prefix: str = "") -> int:
         full_prefix = self._get_blob_name(prefix)
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         blobs = await loop.run_in_executor(
             None,
             partial(list, self.client.list_blobs(self.bucket_name, prefix=full_prefix)),

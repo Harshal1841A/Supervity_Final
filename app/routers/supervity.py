@@ -3,6 +3,7 @@ import uuid
 import logging
 import httpx
 import datetime
+from datetime import timezone
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, Form
 from pydantic import BaseModel
@@ -33,17 +34,16 @@ class ReviewDecision(BaseModel):
 WORKFLOW_SVC_URL = os.getenv("SUPERVITY_BASE_URL", "https://auto.supervity.ai").rstrip("/")
 
 def get_supervity_headers() -> dict:
-    """Returns the bearer-auth headers required by all Supervity API calls."""
-    token = os.getenv("SUPERVITY_API_KEY", "")
-    return {
-        "Authorization": f"Bearer {token}",
-    }
+    token = os.getenv("SUPERVITY_BEARER_TOKEN", os.getenv("SUPERVITY_API_KEY", ""))
+    return {"Authorization": f"Bearer {token}"}
 
 def _now_iso() -> str:
-    return datetime.datetime.utcnow().isoformat() + "Z"
+    return datetime.datetime.now(timezone.utc).isoformat()
 
 def _time_ago(dt: datetime.datetime) -> str:
-    diff = int((datetime.datetime.utcnow() - dt).total_seconds() / 60)
+    now = datetime.datetime.now(timezone.utc)
+    aware_dt = dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt
+    diff = int((now - aware_dt).total_seconds() / 60)
     if diff < 1:
         return "Just now"
     if diff < 60:
@@ -208,6 +208,7 @@ async def get_run_status(run_id: str, db: Session = Depends(get_db)):
     # Mark completed after final step
     if len(new_logs) >= 9:
         run_record.completed = True
+        run_record.status = "completed"
 
     # Reassign to trigger SQLAlchemy mutation detection on JSON columns
     run_record.logs = new_logs

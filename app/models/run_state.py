@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Boolean, DateTime, JSON, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from app.core.database import Base
@@ -13,8 +13,8 @@ class AgentRun(Base):
     logs = Column(JSON, default=list)
     completed = Column(Boolean, default=False)
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     tasks = relationship("AgentTask", back_populates="run", cascade="all, delete-orphan")
 
@@ -34,7 +34,7 @@ class AgentTask(Base):
     
     status = Column(String, default="pending_human")  # pending_human, approved, rejected
     
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     run = relationship("AgentRun", back_populates="tasks")

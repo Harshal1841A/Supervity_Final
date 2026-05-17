@@ -40,7 +40,7 @@ EXPORT FORMATS:
 
 import csv
 import io
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from math import ceil
 from typing import Literal, Optional
 
@@ -179,7 +179,7 @@ async def get_audit_stats(
     
     Requires 'admin' role.
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     week_start = today_start - timedelta(days=7)
 
@@ -262,7 +262,7 @@ async def get_audit_stats(
     # Middleware vs custom log counts
     middleware_logs = (
         db.query(func.count(AuditLog.id))
-        .filter(AuditLog.is_middleware == True)
+        .filter(AuditLog.is_middleware.is_(True))
         .scalar()
         or 0
     )
@@ -360,12 +360,12 @@ def _export_csv(logs: list[AuditLog]) -> StreamingResponse:
     output.seek(0)
     
     # Generate filename with timestamp
-    filename = f"audit_logs_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"audit_logs_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.csv"
     
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename={filename}"},
+        headers={"Content-Disposition": f"attachment; filename=\"{filename}\""},
     )
 
 
@@ -425,12 +425,12 @@ def _export_xlsx(logs: list[AuditLog]) -> StreamingResponse:
     wb.save(output)
     output.seek(0)
     
-    filename = f"audit_logs_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    filename = f"audit_logs_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.xlsx"
     
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": f"attachment; filename={filename}"},
+        headers={"Content-Disposition": f"attachment; filename=\"{filename}\""},
     )
 
 

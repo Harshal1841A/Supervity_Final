@@ -29,12 +29,15 @@ const authOptions: AuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    async jwt({ token }) {
-      // Inject admin roles so all pages are accessible
+    async jwt({ token, account }) {
+      if (account?.access_token) {
+        token.accessToken = account.access_token
+      }
       token.roles = ['admin', 'user']
       return token
     },
     async session({ session, token }) {
+      session.accessToken = (token.accessToken as string) || undefined
       session.roles = (token.roles as string[]) || ['admin', 'user']
       return session
     },
